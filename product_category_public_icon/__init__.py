@@ -1,1 +1,1 @@
-from models import sale_order_line
+from . import models
