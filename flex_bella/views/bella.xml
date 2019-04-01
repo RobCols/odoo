@@ -36,6 +36,7 @@
                         <field name="name"/>
                         <field name="action_id"/>
                         <field name="question_id"/>
+                        <field name="follow_up_question_id" />
                     </group>
                 </sheet>
             </form>
@@ -54,6 +55,7 @@
                             <tree editable="bottom">
                                 <field name="name"/>
                                 <field name="action_id"/>
+                                <field name="follow_up_question_id"/>
                                 <field name="question_id" invisible="1"/>
                             </tree>
                         </field>

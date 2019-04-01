@@ -18,7 +18,7 @@ class BellaAnswer(models.Model):
     name = fields.Char(string="Answer Text", translate=True)
     action_id = fields.Many2one(comodel_name="bella.action", string="Action to execute")
     question_id = fields.Many2one(comodel_name="bella.question", string="Question")
-
+    follow_up_question_id = fields.Many2one(comodel_name="bella.question", string="Follow-up Question")
 
 class BellaAction(models.Model):
     _name = "bella.action"
