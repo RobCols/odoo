@@ -1,0 +1,123 @@
+<odoo>
+    <!-- bella.question tree view -->
+    <record id="bella_question_view_tree" model="ir.ui.view">
+        <field name="name">bella.question.view.tree</field>
+        <field name="model">bella.question</field>
+        <field name="arch" type="xml">
+            <tree>
+                <!-- Add your fields here -->
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+    <!-- bella.action form view -->
+    <record id="bella_action_view_form" model="ir.ui.view">
+        <field name="name">bella.action.view.form</field>
+        <field name="model">bella.action</field>
+        <field name="arch" type="xml">
+            <form string="">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="technical_name"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <!-- bella.answer form view -->
+    <record id="bella_answer_view_form" model="ir.ui.view">
+        <field name="name">bella.answer.view.form</field>
+        <field name="model">bella.answer</field>
+        <field name="arch" type="xml">
+            <form string="">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="action_id"/>
+                        <field name="question_id"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <!-- bella.question form view -->
+    <record id="bella_question_view_form" model="ir.ui.view">
+        <field name="name">bella.question.view.form</field>
+        <field name="model">bella.question</field>
+        <field name="arch" type="xml">
+            <form string="Bella Question">
+                <sheet>
+                    <group>
+                        <field name="name" />
+                        <field name="answer_ids" context="{'default_question_id': active_id}">
+                            <tree editable="bottom">
+                                <field name="name"/>
+                                <field name="action_id"/>
+                                <field name="question_id" invisible="1"/>
+                            </tree>
+                        </field>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- bella.action action window -->
+    <record id="bella_action_action" model="ir.actions.act_window">
+        <field name="name">Bella Actions</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">bella.action</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_type">form</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                Create Bella Actions here
+            </p>
+            <p>
+                These actions need to be created in the mobile app also to work.
+            </p>
+        </field>
+    </record>
+
+    <!-- bella.answer action window -->
+    <record id="bella_answer_action" model="ir.actions.act_window">
+        <field name="name">Bella Answers</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">bella.answer</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_type">form</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                <!-- Add Text Here -->
+            </p>
+            <p>
+                <!-- More details about what a user can do with this object will be OK -->
+            </p>
+        </field>
+    </record>
+    <!-- bella.question action window -->
+    <record id="bella_question_action" model="ir.actions.act_window">
+        <field name="name">Bella Questions</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">bella.question</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_type">form</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                <!-- Add Text Here -->
+            </p>
+            <p>
+                <!-- More details about what a user can do with this object will be OK -->
+            </p>
+        </field>
+    </record>
+
+    <!-- This Menu Item will appear in the Upper bar, that's why It needs NO parent or action -->
+    <menuitem id="bella_menu_root" name="Bella Configuration" sequence="999" web_icon="flex_bella,static/description/icon.png"/>
+    <!-- This Menu Item must have a parent and an action -->
+    <menuitem id="bella_question_menu_act" name="Questions" parent="bella_menu_root" action="bella_question_action" sequence="1"/>
+    <menuitem id="bella_answer_menu_act" name="Answers" parent="bella_menu_root" action="bella_answer_action" sequence="2"/>
+    <menuitem id="bella_action_menu_act" name="Actions" parent="bella_menu_root" action="bella_action_action" sequence="3"/>
+
+</odoo>
