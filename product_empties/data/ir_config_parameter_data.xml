@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+    <data noupdate="1">
+        <record id="empty_section_name_in_sol" model="ir.config_parameter">
+            <field name="key">empty_product.section_name_empty_products</field>
+            <field name="value">Empties</field>
+        </record>
+        <record id="normal_section_name_in_sol" model="ir.config_parameter">
+            <field name="key">empty_product.section_name_regular_products</field>
+            <field name="value">Regular Products</field>
+        </record>
+    </data>
+</odoo>
