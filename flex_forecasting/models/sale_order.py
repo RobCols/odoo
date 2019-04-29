@@ -8,10 +8,24 @@ class SaleOrder(models.Model):
     @api.model
     def send_orders_to_forecasting_api(self):
         # records = self.search([("sync_needed", "=", True)])
-        records = self.search([])
-        headers = {
-            "Authorization": "Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IkRCMDMxOTBFOEY3RDZDRjdBNDgyQUM5NEREQ0VEM0M4OUEzMDJGRjIiLCJ0eXAiOiJKV1QiLCJ4NXQiOiIyd01aRG85OWJQZWtncXlVM2M3VHlKb3dMX0kifQ.eyJuYmYiOjE1NTU1NzgyNzgsImV4cCI6MTU1NTU4MTg3OCwiaXNzIjoiaHR0cHM6Ly9pZHAubGl0ZWZsZWV0LmlvIiwiYXVkIjpbImh0dHBzOi8vaWRwLmxpdGVmbGVldC5pby9yZXNvdXJjZXMiLCJNb3ZldGVYTGl0ZUZsZWV0QXBpIl0sImNsaWVudF9pZCI6IlB1YmxpY0xpdGVGbGVldEFwaS0xIiwic3ViIjoiOSIsImF1dGhfdGltZSI6MTU1NTU3ODI3OCwiaWRwIjoibG9jYWwiLCJuYW1lIjoiOSIsInNjb3BlIjpbIk1vdmV0ZVhMaXRlRmxlZXRBcGkiXSwiYW1yIjpbInB3ZCJdfQ.oQrLGadae3mMk2Nd5Z6IU2xwiiwVV21IMu-Vgq-XuTk9F0lyXqL3jKg-lBY_yd0WohESvlUpkFDEByhvIIyt4yGoDcMUN65IAVxGPXwG4JrkhTnmEvN0mgIjLvpZh-YshoJ4zr4pSB9PjBscWZURg7vk5iMnmPD_s5XACtMAqIUFR5nG0pkhTsWbvFIULtFA3pZvezlt-c5P8YAaf2eV3qg9unS9hNXHHsqchJj-cN7lgK55-DFYjPBldwboFFsfG9dLptSWvDCB0u6w8bj-8_-DntNz1jKzhfaWolBfa3szAOBXoBJLU1TU6FflY9g5qZCbgnmTjervmaQ-2DVmQw"
+        ICPSudo = self.env["ir.config_parameter"].sudo()
+        client_id = ICPSudo.get_param("flex_forecasting.client_id")
+        client_secret = ICPSudo.get_param("flex_forecasting.client_secret")
+        username = ICPSudo.get_param("flex_forecasting.username")
+        password = ICPSudo.get_param("flex_forecasting.password")
+
+        payload = {
+            "grant_type": "password",
+            "client_id": client_id,
+            "client_secret": client_secret,
+            "username": username,
+            "password": password,
         }
+
+        r = requests.post("https://idp.litefleet.io/connect/token", data=payload)
+
+        records = self.search([("product_id.is_empty", "=", "False"), ("product_uom_qty", ">", 0)])
+        headers = {"Authorization": f"Bearer {r.json()['access_token']}"}
         data = []
         for rec in records:
             for ol in rec.order_line:
