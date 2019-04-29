@@ -15,7 +15,7 @@ class ProductTemplate(models.Model):
         "product.empty", "original_product_id", "Empty Product"
     )
     unit_price = fields.Float("Price per unit")
-    unit_uom = fields.Many2one("uom.uom", string="Unit for PPU", )
+    unit_uom = fields.Many2one("uom.uom", string="Unit for PPU")
 
     @api.depends("product_variant_ids", "product_variant_ids.is_empty")
     def _compute_is_empty(self):

@@ -6,7 +6,7 @@ $(document).ready(function () {
             type: 'post',
             data: $(this).closest('form').serialize(),
             success: function () {
-                $("#my_cart").load(location.href + " #my_cart");
+                $("#my_cart").load(location.href + " #my_cart>*", "");
                 $("#my_cart").removeClass("d-none");
             }
         });
@@ -16,7 +16,7 @@ $(document).ready(function () {
         if ($('.min_qty_not_reached').length) {
             $(".checkout-btn").removeAttr("href");
         } else {
-            $(".checkout-btn").each(function(){$(this).attr("href", "/shop/checkout");});
+            $(".checkout-btn").each(function () { $(this).attr("href", "/shop/checkout"); });
         }
     });
 

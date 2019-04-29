@@ -20,22 +20,19 @@
 ##############################################################################
 
 {
-    'name': 'Website Sale One Click Shopping',
-    'version': '0.1',
-    'category': 'website_sale',
-    'description': """
+    "name": "Website Sale One Click Shopping",
+    "version": "0.1",
+    "category": "website_sale",
+    "description": """
 One Click Shopping Button
 =========================
 * Shopping button update shopping cart without redirect to shopping cart page
 * This module does an ajax request to /shop/cart/update after clicked "Add to cart" button
 """,
-    'author': 'Vertel AB',
-    'license': 'AGPL-3',
-    'website': 'http://www.vertel.se',
-    'depends': ['website_sale'],
-    'data': [
-        'website_template.xml',
-    ],
-    'installable': True,
+    "author": "Vertel AB",
+    "license": "AGPL-3",
+    "website": "http://www.vertel.se",
+    "depends": ["website_sale"],
+    "data": ["website_template.xml"],
+    "installable": True,
 }
-

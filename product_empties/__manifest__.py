@@ -11,7 +11,7 @@
         "views/product.xml",
         "views/product_empty.xml",
         "views/res_config_settings_views.xml",
-        "views/templates.xml"
+        "views/templates.xml",
     ],
     "installable": True,
     "license": "",
