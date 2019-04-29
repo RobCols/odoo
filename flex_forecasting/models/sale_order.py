@@ -25,15 +25,14 @@ class SaleOrderLine(models.Model):
         r = requests.post("https://idp.litefleet.io/connect/token", data=payload)
 
         records = self.search(
-            [
-                ("product_id.is_empty", "=", "False"),
-                ("product_uom_qty", ">", 0),
-                ("order_id.state", "in", ["sale", "done", "cancel"]),
-            ]
+            [("name", "not ilike", "total"), ("product_uom_qty", ">", 0)]
         )
         headers = {"Authorization": f"Bearer {r.json()['access_token']}"}
         data = []
-        for ol in records:
+        for ol in records.filtered(
+            lambda ol: not ol.product_id.product_tmpl_id.is_empty
+            and ol.order_id.state in ["draft", "sent", "done", "sale"]
+        ):
             data.append(
                 {
                     "partnerId": ol.id,
