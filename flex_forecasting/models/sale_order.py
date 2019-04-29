@@ -2,8 +2,8 @@ from odoo import api, fields, models
 import requests
 
 
-class SaleOrder(models.Model):
-    _inherit = "sale.order"
+class SaleOrderLine(models.Model):
+    _inherit = "sale.order.line"
 
     @api.model
     def send_orders_to_forecasting_api(self):
@@ -24,25 +24,28 @@ class SaleOrder(models.Model):
 
         r = requests.post("https://idp.litefleet.io/connect/token", data=payload)
 
-        records = self.search([("product_id.is_empty", "=", "False"), ("product_uom_qty", ">", 0)])
+        records = self.search(
+            [
+                ("product_id.is_empty", "=", "False"),
+                ("product_uom_qty", ">", 0),
+                ("order_id.state", "in", ["sale", "done", "cancel"]),
+            ]
+        )
         headers = {"Authorization": f"Bearer {r.json()['access_token']}"}
         data = []
-        for rec in records:
-            for ol in rec.order_line:
-                if ol.product_uom_qty < 1:
-                    continue
-                data.append(
-                    {
-                        "partnerId": ol.id,
-                        "customerPartnerId": rec.partner_id.id,
-                        "productPartnerId": ol.product_id.id,
-                        "quantity": ol.product_uom_qty,
-                        "forecastedOrder": False,
-                        "accepted": True,
-                        "cancelled": False,
-                        "deliveryDate": rec.date_order.isoformat(),
-                    }
-                )
+        for ol in records:
+            data.append(
+                {
+                    "partnerId": ol.id,
+                    "customerPartnerId": ol.order_id.partner_id.id,
+                    "productPartnerId": ol.product_id.id,
+                    "quantity": ol.product_uom_qty,
+                    "forecastedOrder": False,
+                    "accepted": True,
+                    "cancelled": False,
+                    "deliveryDate": ol.order_id.date_order.isoformat(),
+                }
+            )
         r = requests.post(
             "https://api.litefleet.io/api/Orders/multiple", json=data, headers=headers
         )
