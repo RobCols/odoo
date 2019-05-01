@@ -19,7 +19,7 @@ class ProductTemplate(models.Model):
 
     @api.depends("product_variant_ids", "product_variant_ids.is_empty")
     def _compute_is_empty(self):
-        unique_variants = self.filtered(
+        unique_variants = self.sudo().filtered(
             lambda template: len(template.product_variant_ids) == 1
         )
         for template in unique_variants:
@@ -28,7 +28,7 @@ class ProductTemplate(models.Model):
             template.is_empty = True
 
     def _inverse_is_empty(self):
-        for template in self:
+        for template in self.sudo():
             if len(template.product_variant_ids) != 1:
                 continue
             template.product_variant_ids.is_empty = template.is_empty
