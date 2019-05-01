@@ -54,7 +54,7 @@ class SaleOrder(models.Model):
             record.empties_price = sum(
                 [
                     ol.price_subtotal if ol.product_id.is_empty else 0.0
-                    for ol in self.order_line
+                    for ol in record.order_line
                 ]
             )
 
