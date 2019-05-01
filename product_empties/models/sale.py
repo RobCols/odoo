@@ -21,7 +21,7 @@ class SaleOrder(models.Model):
         "order_line.product_id.min_order_qty",
     )
     def _compute_min_quantities_reached(self):
-        for record in self:
+        for record in self.sudo():
             record.min_quantities_reached = 0 == len(
                 record.order_line.filtered(
                     lambda ol: ol.product_uom_qty < ol.product_id.min_order_qty
@@ -35,7 +35,7 @@ class SaleOrder(models.Model):
         "order_line.product_id.is_empty",
     )
     def _compute_products_price(self):
-        for record in self:
+        for record in self.sudo():
             record.products_price = sum(
                 [
                     ol.price_total if not ol.product_id.is_empty else 0.0
@@ -50,7 +50,7 @@ class SaleOrder(models.Model):
         "order_line.product_id.is_empty",
     )
     def _compute_empties_price(self):
-        for record in self:
+        for record in self.sudo():
             record.empties_price = sum(
                 [
                     ol.price_subtotal if ol.product_id.is_empty else 0.0
@@ -225,7 +225,7 @@ class SaleOrderLine(models.Model):
 
     @api.depends("empties_price")
     def _compute_empties_price(self):
-        for record in self:
+        for record in self.sudo():
             record.empties_price = sum(
                 [
                     (record.product_uom_qty
