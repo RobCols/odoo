@@ -4,11 +4,11 @@ from odoo import fields, models, api
 class SaleOrder(models.Model):
     _inherit = "sale.order"
 
-    empties_price = fields.Float(
+    empties_price = fields.Monetary(
         string="Empty goods price", compute="_compute_empties_price"
     )
 
-    products_price = fields.Float(
+    products_price = fields.Monetary(
         string="Products price", compute="_compute_products_price"
     )
 
@@ -38,7 +38,7 @@ class SaleOrder(models.Model):
         for record in self:
             record.products_price = sum(
                 [
-                    ol.price_total if not ol.product_id.is_empty else 0
+                    ol.price_total if not ol.product_id.is_empty else 0.0
                     for ol in self.order_line
                 ]
             )
@@ -53,7 +53,7 @@ class SaleOrder(models.Model):
         for record in self:
             record.empties_price = sum(
                 [
-                    ol.price_subtotal if ol.product_id.is_empty else 0
+                    ol.price_subtotal if ol.product_id.is_empty else 0.0
                     for ol in self.order_line
                 ]
             )
@@ -219,7 +219,7 @@ class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
     sequence = fields.Integer(string="Sequence", default=200)
-    empties_price = fields.Float(
+    empties_price = fields.Monetary(
         string="Empties price", compute="_compute_empties_price"
     )
 
@@ -228,9 +228,9 @@ class SaleOrderLine(models.Model):
         for record in self:
             record.empties_price = sum(
                 [
-                    record.product_uom_qty
+                    (record.product_uom_qty
                     * empty.quantity
-                    * empty.product_id.list_price
+                    * empty.product_id.list_price) or 0.0
                     for empty in record.product_id.product_empty_ids
                 ]
             )
