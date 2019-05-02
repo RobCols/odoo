@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Form view for res users-->
+        <record id="view_res_users_inherit_form" model="ir.ui.view">
+            <field name="name">res.users.form</field>
+            <field name="model">res.users</field>
+            <field name="inherit_id" ref="base.view_users_form"/>
+            <field name="arch" type="xml">
+                <notebook position="inside">
+                    <page string="Configure Messages">
+                        <field name="device_ids" context="{'default_user_id': active_id}">
+                            <form>
+                                <sheet>
+                                    <group>
+                                        <field name="registration_token"/>
+                                        <field name="user_id" />
+                                    </group>
+                                </sheet>
+                            </form>
+                            <tree>
+                                <field name="registration_token"/>
+                                <field name="user_id" />
+                            </tree>
+                        </field>
+                    </page>
+                </notebook>
+            </field>
+        </record>
+    </data>
+</odoo>

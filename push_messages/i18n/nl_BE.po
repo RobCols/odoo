@@ -1,0 +1,107 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* push_messages
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 12.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-04 13:12+0000\n"
+"PO-Revision-Date: 2019-04-04 13:12+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: push_messages
+#: model_terms:ir.ui.view,arch_db:push_messages.view_res_users_inherit_form
+msgid "Configure Messages"
+msgstr ""
+
+#. module: push_messages
+#: model:ir.model.fields,field_description:push_messages.field_push_device__create_uid
+msgid "Created by"
+msgstr "Aangemaakt door"
+
+#. module: push_messages
+#: model:ir.model.fields,field_description:push_messages.field_push_device__create_date
+msgid "Created on"
+msgstr "Aangemaakt op"
+
+#. module: push_messages
+#: model:ir.ui.menu,name:push_messages.device_root
+msgid "Device"
+msgstr ""
+
+#. module: push_messages
+#: model:ir.model.fields,field_description:push_messages.field_push_device_mixin__device_ids
+#: model:ir.model.fields,field_description:push_messages.field_res_users__device_ids
+msgid "Devices"
+msgstr ""
+
+#. module: push_messages
+#: model:ir.model.fields,field_description:push_messages.field_push_device__display_name
+#: model:ir.model.fields,field_description:push_messages.field_push_device_mixin__display_name
+msgid "Display Name"
+msgstr "Weergave naam"
+
+#. module: push_messages
+#: model:ir.model.fields,field_description:push_messages.field_push_device__id
+#: model:ir.model.fields,field_description:push_messages.field_push_device_mixin__id
+msgid "ID"
+msgstr ""
+
+#. module: push_messages
+#: model:ir.model.fields,field_description:push_messages.field_push_device____last_update
+#: model:ir.model.fields,field_description:push_messages.field_push_device_mixin____last_update
+msgid "Last Modified on"
+msgstr "Laatst gewijzigd op"
+
+#. module: push_messages
+#: model:ir.model.fields,field_description:push_messages.field_push_device__write_uid
+msgid "Last Updated by"
+msgstr "Laatst bijgewerkt door"
+
+#. module: push_messages
+#: model:ir.model.fields,field_description:push_messages.field_push_device__write_date
+msgid "Last Updated on"
+msgstr "Laatst bijgewerkt op"
+
+#. module: push_messages
+#: model:ir.actions.act_window,name:push_messages.push_device_action
+#: model:ir.model,name:push_messages.model_push_device
+msgid "Push Device"
+msgstr ""
+
+#. module: push_messages
+#: model:ir.model,name:push_messages.model_push_device_mixin
+msgid "Push Device Mixin"
+msgstr ""
+
+#. module: push_messages
+#: model:ir.model.fields,field_description:push_messages.field_push_device__registration_token
+msgid "Registration Token"
+msgstr ""
+
+#. module: push_messages
+#: code:addons/push_messages/models/push_device.py:21
+#, python-format
+msgid "Registration Token should be unique."
+msgstr ""
+
+#. module: push_messages
+#: model:ir.model.fields,field_description:push_messages.field_push_device__res_id
+msgid "Res ID"
+msgstr ""
+
+#. module: push_messages
+#: model:ir.model.fields,field_description:push_messages.field_push_device__res_model
+msgid "Res Model"
+msgstr ""
+
+#. module: push_messages
+#: model:ir.model,name:push_messages.model_res_users
+msgid "Users"
+msgstr "Gebruikers"
