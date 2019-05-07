@@ -31,13 +31,13 @@ class SettingsService(Component):
             invoice_notifications.append("app")
 
         result = {
-            "firstName": partner.firstname,
-            "lastName": partner.lastname,
-            "streetAndNr": partner.street,
-            "postalCode": partner.zip,
-            "city": partner.city,
-            "email": partner.email,
-            "mobilePhone": partner.mobile,
+            "firstName": partner.firstname or "",
+            "lastName": partner.lastname or "",
+            "streetAndNr": partner.street or "",
+            "postalCode": partner.zip or "",
+            "city": partner.city or "",
+            "email": partner.email or "",
+            "mobilePhone": partner.mobile or "",
             "deliveryPreference": partner.comment,
             "deliveryNotifications": delivery_notifications,
             "deliveryInvoiceNotifications": invoice_notifications,
@@ -49,11 +49,11 @@ class SettingsService(Component):
             return result
 
         result["company"] = {
-            "name": partner.parent_id.name,
-            "vatNr": partner.parent_id.vat,
-            "postalCode": partner.parent_id.zip,
-            "city": partner.parent_id.city,
-            "streetAndNr": partner.parent_id.street,
+            "name": partner.parent_id.name or "",
+            "vatNr": partner.parent_id.vat or "",
+            "postalCode": partner.parent_id.zip or "",
+            "city": partner.parent_id.city or "",
+            "streetAndNr": partner.parent_id.street or "",
         }
 
         return result
