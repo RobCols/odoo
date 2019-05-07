@@ -228,9 +228,12 @@ class SaleOrderLine(models.Model):
         for record in self.sudo():
             record.empties_price = sum(
                 [
-                    (record.product_uom_qty
-                    * empty.quantity
-                    * empty.product_id.list_price) or 0.0
+                    (
+                        record.product_uom_qty
+                        * empty.quantity
+                        * empty.product_id.list_price
+                    )
+                    or 0.0
                     for empty in record.product_id.product_empty_ids
                 ]
             )

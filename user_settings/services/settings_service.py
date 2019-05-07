@@ -37,10 +37,12 @@ class SettingsService(Component):
             "postalCode": partner.zip,
             "city": partner.city,
             "email": partner.email,
+            "mobilePhone": partner.mobile,
             "deliveryPreference": partner.comment,
             "deliveryNotifications": delivery_notifications,
             "deliveryInvoiceNotifications": invoice_notifications,
             "noFurtherDeliveries": partner.no_more_deliveries,
+            "deliveryDayOfWeek": partner.delivery_dow,
         }
 
         if not partner.parent_id:
@@ -49,6 +51,9 @@ class SettingsService(Component):
         result["company"] = {
             "name": partner.parent_id.name,
             "vatNr": partner.parent_id.vat,
+            "postalCode": partner.parent_id.zip,
+            "city": partner.parent_id.city,
+            "streetAndNr": partner.parent_id.street,
         }
 
         return result
@@ -69,6 +74,7 @@ class SettingsService(Component):
         self._add_to_dict_if_truthy(params, partner_vals, "postalCode", "zip")
         self._add_to_dict_if_truthy(params, partner_vals, "city", "city")
         self._add_to_dict_if_truthy(params, partner_vals, "email", "email")
+        self._add_to_dict_if_truthy(params, partner_vals, "mobilePhone", "mobile")
         self._add_to_dict_if_truthy(
             params, partner_vals, "noFurtherDeliveries", "no_more_deliveries"
         )
@@ -103,8 +109,14 @@ class SettingsService(Component):
                         ("is_company", "=", True),
                     ]
                 )
-            if params["company"].get("name", False):
-                company_vals["name"] = params["company"]["name"]
+            self._add_to_dict_if_truthy(params["company"], company_vals, "name", "name")
+            self._add_to_dict_if_truthy(
+                params["company"], company_vals, "streetAndNr", "street"
+            )
+            self._add_to_dict_if_truthy(
+                params["company"], company_vals, "postalCode", "zip"
+            )
+            self._add_to_dict_if_truthy(params["company"], company_vals, "city", "city")
             if not len(company):
                 if "name" not in company_vals:
                     company_vals["name"] = partner.name + " COMPANY"
@@ -113,9 +125,7 @@ class SettingsService(Component):
             elif len(company) == 1:
                 company.write(company_vals)
             else:
-                raise ValidationError(
-                    "Multiple companies found for this VAT Number :("
-                )
+                raise ValidationError("Multiple companies found for this VAT Number :(")
 
         if len(company):
             partner_vals["parent_id"] = company.id
@@ -136,9 +146,16 @@ class SettingsService(Component):
             "postalCode": {"type": "string"},
             "city": {"type": "string"},
             "email": {"type": "string"},
+            "mobilePhone": {"type": "string"},
             "company": {
                 "type": "dict",
-                "schema": {"name": {"type": "string"}, "vatNr": {"type": "string"}},
+                "schema": {
+                    "name": {"type": "string"},
+                    "vatNr": {"type": "string"},
+                    "streetAndNr": {"type": "string"},
+                    "postalCode": {"type": "string"},
+                    "city": {"type": "string"},
+                },
             },
             "deliveryNotifications": {
                 "type": "list",
@@ -157,6 +174,7 @@ class SettingsService(Component):
                 },
             },
             "noFurtherDeliveries": {"type": "boolean", "coerce": to_bool},
+            "deliveryDayOfWeek": {"type": "integer", "coerce": to_int},
         }
 
     def _validator_update(self):
@@ -167,9 +185,16 @@ class SettingsService(Component):
             "postalCode": {"type": "string"},
             "city": {"type": "string"},
             "email": {"type": "string"},
+            "mobilePhone": {"type": "string"},
             "company": {
                 "type": "dict",
-                "schema": {"name": {"type": "string"}, "vatNr": {"type": "string"}},
+                "schema": {
+                    "name": {"type": "string"},
+                    "vatNr": {"type": "string"},
+                    "streetAndNr": {"type": "string"},
+                    "postalCode": {"type": "string"},
+                    "city": {"type": "string"},
+                },
             },
             "deliveryNotifications": {
                 "type": "list",
@@ -188,6 +213,7 @@ class SettingsService(Component):
                 },
             },
             "noFurtherDeliveries": {"type": "boolean", "coerce": to_bool},
+            "deliveryDayOfWeek": {"type": "integer", "coerce": to_int},
         }
 
     def _add_to_dict_if_truthy(self, origin_dict, dest_dict, key_name, dest_key_name):

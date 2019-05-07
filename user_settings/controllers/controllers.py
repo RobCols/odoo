@@ -8,4 +8,3 @@ class MobileApi(main.RestController):
     _root_path = "/api/"
     _collection_name = "user_settings.services"
     _default_auth = "user"
-
