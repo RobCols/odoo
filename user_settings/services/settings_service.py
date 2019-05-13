@@ -38,7 +38,7 @@ class SettingsService(Component):
             "city": partner.city or "",
             "email": partner.email or "",
             "mobilePhone": partner.mobile or "",
-            "deliveryPreference": partner.comment,
+            "deliveryPreference": partner.comment or "",
             "deliveryNotifications": delivery_notifications,
             "deliveryInvoiceNotifications": invoice_notifications,
             "noFurtherDeliveries": partner.no_more_deliveries,
@@ -96,7 +96,9 @@ class SettingsService(Component):
                 partner_vals["invoice_notification_push"] = True
 
         company = self.env["res.partner"].sudo()
-        if "company" in params:
+        if "company" in params and not params.get("company", False):
+            partner_vals["parent_id"] = False
+        elif "company" in params:
             if params["company"].get("vatNr", False):
                 company_vals["vat"] = params["company"]["vatNr"]
                 company = company.search(
