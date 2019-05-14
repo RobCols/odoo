@@ -190,6 +190,7 @@ class SettingsService(Component):
             "mobilePhone": {"type": "string"},
             "company": {
                 "type": "dict",
+                "nullable": True,
                 "schema": {
                     "name": {"type": "string"},
                     "vatNr": {"type": "string"},
