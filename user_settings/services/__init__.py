@@ -1,1 +1,1 @@
-from . import settings_service
+from . import settings_service, signup_service
