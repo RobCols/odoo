@@ -25,29 +25,31 @@ class FavouritesService(Component):
         """
         Add a list of favourite products to the current users's favs
         """
-        user = self._get(self.env.uid)
-        user.partner_id.write(
+        uid = self.env.uid
+        user = self._get(uid)
+        user.partner_id.sudo().write(
             {
                 "favourite_product_template_ids": [
                     (4, id, False) for id in params["productTemplateIds"]
                 ]
             }
         )
-        return self._to_json(self._get(self.env.uid))
+        return self._to_json(self._get(uid))
 
     def unfavourite(self, **params):
         """
         Remove a list of favourite products from the current users's favs
         """
-        user = self._get(self.env.uid)
-        user.partner_id.write(
+        uid = self.env.uid
+        user = self._get(uid)
+        user.partner_id.sudo().write(
             {
                 "favourite_product_template_ids": [
                     (3, id, False) for id in params["productTemplateIds"]
                 ]
             }
         )
-        return self._to_json(self._get(self.env.uid))
+        return self._to_json(self._get(uid))
 
     # The following method are 'private' and should be never never NEVER call
     # from the controller.
