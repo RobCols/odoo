@@ -19,3 +19,5 @@ class ResPartner(models.Model):
     )
 
     no_more_deliveries = fields.Boolean("No more deliveries required", default=False)
+    
+    favourite_product_template_ids = fields.Many2many(comodel_name='product.template', string='Favourite products')
