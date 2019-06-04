@@ -1,5 +1,5 @@
 from odoo.addons.component.core import Component
-
+from odoo.exceptions import AccessError
 from odoo.addons.base_rest.components.service import to_int, to_bool
 
 
