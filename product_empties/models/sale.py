@@ -50,11 +50,11 @@ class SaleOrder(models.Model):
         "order_line.product_id.is_empty",
     )
     def _compute_empties_price(self):
-        for record in self.sudo():
+        for record in self:
             record.empties_price = sum(
                 [
                     ol.price_subtotal if ol.product_id.is_empty else 0.0
-                    for ol in record.order_line
+                    for ol in record.sudo().order_line
                 ]
             )
 
@@ -108,6 +108,7 @@ class SaleOrder(models.Model):
         # Add code here
         return super(SaleOrder, self).create(values)
 
+    # region sections...
     # def get_next_sequence(self, product_type='regular'):
     #     if product_type == 'empty':
     #         seq_product_empty = list(
@@ -208,6 +209,7 @@ class SaleOrder(models.Model):
     #         sol_lines=regular_product_lines,
     #         start_seq=regular_section.sequence)
     #     return curr_seq
+    # endregion
 
     @api.multi
     def copy(self, default=None):
@@ -225,16 +227,16 @@ class SaleOrderLine(models.Model):
 
     @api.depends("empties_price")
     def _compute_empties_price(self):
-        for record in self.sudo():
+        for record in self:
             record.empties_price = sum(
                 [
                     (
-                        record.product_uom_qty
+                        record.sudo().product_uom_qty
                         * empty.quantity
                         * empty.product_id.list_price
                     )
                     or 0.0
-                    for empty in record.product_id.product_empty_ids
+                    for empty in record.sudo().product_id.product_empty_ids
                 ]
             )
 
