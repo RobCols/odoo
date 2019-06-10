@@ -31,6 +31,11 @@
         <field name="model">bella.answer</field>
         <field name="arch" type="xml">
             <form string="">
+                <div class="oe_button_box" name="button_box">
+                    <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                        <field name="active" widget="boolean_button" options="{&quot;terminology&quot;: &quot;archive&quot;}"/>
+                    </button>
+                </div>
                 <sheet>
                     <group>
                         <field name="name"/>
@@ -48,11 +53,19 @@
         <field name="model">bella.question</field>
         <field name="arch" type="xml">
             <form string="Bella Question">
+                <div class="oe_button_box" name="button_box">
+                    <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                        <field name="active" widget="boolean_button" options="{&quot;terminology&quot;: &quot;archive&quot;}"/>
+                    </button>
+                </div>
                 <sheet>
                     <group>
                         <field name="name" />
+                        <field name="trigger_action_id"/>
                         <field name="answer_ids" context="{'default_question_id': active_id}">
                             <tree editable="bottom">
+                                <field name="sequence" widget="handle" />
+                                <field name="active"/>
                                 <field name="name"/>
                                 <field name="action_id"/>
                                 <field name="follow_up_question_id"/>

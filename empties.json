@@ -1,0 +1,19 @@
+REQ
+---
+[
+    {
+        "productId": 5
+        "quantity": 5
+    },
+]
+
+RESP
+----
+[
+    {
+        "originalProductId": 5
+        "replacementProductId": 6
+        "quantity": 1
+        "empties": 4.5
+    },
+]
