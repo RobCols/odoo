@@ -216,6 +216,10 @@ class SaleOrder(models.Model):
         self = self.with_context(do_not_add_empty_products=True)
         return super(SaleOrder, self).copy(default)
 
+    @api.model
+    def load(self, fields, data):
+        self = self.with_context(do_not_add_empty_products=True)
+        return super(SaleOrder, self).load(fields, data)
 
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
@@ -355,3 +359,8 @@ class SaleOrderLine(models.Model):
     def copy(self, default=None):
         self = self.with_context(do_not_add_empty_products=True)
         return super(SaleOrderLine, self).copy(default)
+
+    @api.model
+    def load(self, fields, data):
+        self = self.with_context(do_not_add_empty_products=True)
+        return super(SaleOrderLine, self).load(fields, data)
