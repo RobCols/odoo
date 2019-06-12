@@ -221,6 +221,7 @@ class SaleOrder(models.Model):
         self = self.with_context(do_not_add_empty_products=True)
         return super(SaleOrder, self).load(fields, data)
 
+
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
