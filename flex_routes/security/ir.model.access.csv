@@ -1,0 +1,4 @@
+id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
+access_route_route,access_route_route,model_route_route,base.group_user,1,1,1,1
+access_route_optimization,access_route_optimization,model_route_optimization,base.group_user,1,1,1,1
+access_route_optimization_preparation,access_route_optimization_preparation,model_route_optimization_preparation,base.group_user,1,1,1,1

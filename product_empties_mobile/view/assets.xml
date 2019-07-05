@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+       <template id="assets_backend" name="product_empties_mobile assets" inherit_id="web.assets_backend">
+            <xpath expr="." position="inside">
+                <script type="text/javascript" src="/product_empties_mobile/static/src/js/sale_order_model.js"></script>
+                <script type="text/javascript" src="/product_empties_mobile/static/src/js/sale_order_action.js"></script>
+                <link rel="stylesheet" type="text/scss" href="/product_empties_mobile/static/src/scss/sale_order_barcode.scss"/>
+            </xpath>
+        </template>
+    </data>
+</odoo>

@@ -1,0 +1,61 @@
+<odoo>
+    <!-- route.optimization action window -->
+    <record id="route_optimization_action" model="ir.actions.act_window">
+        <field name="name">Routeoptimalisatie</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">route.optimization</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_type">form</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                <!-- Add Text Here -->
+            </p>
+            <p>
+                <!-- More details about what a user can do with this object will be OK -->
+            </p>
+        </field>
+    </record>
+    
+    <!-- route.optimization tree view -->
+    <record id="route_optimization_view_tree" model="ir.ui.view">
+        <field name="name">Routeoptimalisatie</field>
+        <field name="model">route.optimization</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="date" />
+                <field name="optimization_preparation_ids" widget="many2many_tags" />
+            </tree>
+        </field>
+    </record>
+    <!-- route.optimization form view -->
+    <record id="route_optimization_view_form" model="ir.ui.view">
+        <field name="name">route.optimization.view.form</field>
+        <field name="model">route.optimization</field>
+        <field name="arch" type="xml">
+            <form string="Routeoptimalisatie">
+                <sheet>
+                    <group string="Start optimalisatie">
+                        <field name="date" />
+                        <field name="optimization_preparation_ids">
+                            <tree editable="bottom">
+                                <field name="vehicle_id" />
+                                <field name="user_id" />
+                                <field name="min_driving_time" />
+                                <field name="max_driving_time" />
+                            </tree>
+                        </field>
+                    </group>
+                    <button type="object" name="start_optimization" class="btn btn-primary" string="Start" attrs="{'invisible': [('route_ids', '!=', [])]}" />
+                    
+                    <group string="Resultaat optimalisatie" attrs="{'invisible': [('route_ids', '=', [])]}">
+                        <field name="route_ids" readonly="1" />
+                    </group>
+                    <button type="object" name="cancel_optimization" class="btn btn-danger pull-right" string="Reset" attrs="{'invisible': [('route_ids', '=', [])]}" />
+                    
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <!-- This Menu Item must have a parent and an action -->
+    <menuitem id="route_optimization_menu_act" name="Routeoptimalisaties" parent="route_menu_root" action="route_optimization_action" sequence="2" />
+</odoo>

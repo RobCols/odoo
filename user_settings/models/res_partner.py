@@ -23,3 +23,5 @@ class ResPartner(models.Model):
     favourite_product_template_ids = fields.Many2many(
         comodel_name="product.template", string="Favourite products"
     )
+
+    holiday_ids = fields.One2many(comodel_name="res.partner.holiday", inverse_name="partner_id", string="Holidays")

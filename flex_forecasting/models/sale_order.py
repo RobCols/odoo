@@ -5,6 +5,12 @@ import requests
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
+    forecasted = fields.Boolean("Forecasted Line", help="", default=False)
+    accepted = fields.Boolean("Accepted", default=False)
+    cancelled = fields.Boolean("Cancelled", default=False)
+    proposed_forecast_date = fields.Datetime("Proposed Forecast Date", help="")
+    delivery_date = fields.Datetime("Delivery Date", help="")
+
     @api.model
     def send_orders_to_forecasting_api(self):
         # records = self.search([("sync_needed", "=", True)])

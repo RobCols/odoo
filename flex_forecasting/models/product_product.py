@@ -45,7 +45,7 @@ class ProductProduct(models.Model):
                 {
                     "partnerId": rec.id,
                     "name": rec.name,
-                    "active": True,
+                    "active": rec.active,
                     "startDate": date.isoformat(),
                 }
             )

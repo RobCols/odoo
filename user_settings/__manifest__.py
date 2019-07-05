@@ -19,4 +19,5 @@
         "partner_firstname",
         "flex_courier_rounds",
     ],
+    "data": ["security/ir.model.access.csv"],
 }
