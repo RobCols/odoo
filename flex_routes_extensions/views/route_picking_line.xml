@@ -1,0 +1,19 @@
+<odoo>
+    <!-- route.route inherit form view -->
+    <record id="route_route_view_form" model="ir.ui.view">
+        <field name="name">route.route.inherit.view.form</field>
+        <field name="model">route.route</field>
+        <field name="inherit_id" ref="flex_routes.route_route_view_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='sale_order_ids']" position="after">
+                <field name="route_picking_ids">
+                    <tree editable="bottom">
+                        <field name="product_qty" />
+                        <field name="product_id" />
+                        <field name="state" />
+                    </tree>
+                </field>
+            </xpath>            
+        </field>
+    </record>
+</odoo>
