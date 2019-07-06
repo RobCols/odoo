@@ -101,6 +101,7 @@ class FavouritesService(Component):
         return self._validator_return_get()
 
     def _to_json(self, user):
+        user = user.sudo()
         return {
             "uid": user.id,
             "partnerId": user.partner_id.id,
