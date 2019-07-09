@@ -1,0 +1,15 @@
+{
+    "name": "LeafletJS Widget",
+    "version": "12.0.2.1.0",
+    "author": "Abstractive, Vincent Baggerman",
+    "website": "https://www.abstractive.be",
+    "license": "LGPL-3",
+    "category": "Odoo widgets",
+    "depends": ["web", "website"],
+    "data": ["views/web_leafletjs_assets.xml"],
+    "qweb": ["static/src/xml/resource.xml"],
+    "installable": True,
+    "application": False,
+    "bootstrap": True,
+    "auto_install": False,
+}

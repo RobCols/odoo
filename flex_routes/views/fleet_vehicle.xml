@@ -1,0 +1,146 @@
+<odoo>
+    <!-- fleet.vehicle inherit form view -->
+    <record id="fleet_vehicle_form" model="ir.ui.view">
+        <field name="name">fleet.vehicle.inherit.view.form</field>
+        <field name="model">fleet.vehicle</field>
+        <field name="inherit_id" ref="fleet.fleet_vehicle_view_form" />
+        <field name="arch" type="xml">
+            <div class="oe_chatter" position="replace" />
+            
+            <sheet position="replace">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="open_assignation_logs" string="Drivers History" type="object" class="oe_stat_button" icon="fa-history" />
+                        <button name="return_action_to_open" type="object" class="oe_stat_button" icon="fa-book" context="{'xml_id':'fleet_vehicle_log_contract_action', 'search_default_open': 1}" help="show the contract for this vehicle">
+                            <field name="contract_count" widget="statinfo" string="Contracts" />
+                        </button>
+                        <button name="act_show_log_cost" type="object" class="oe_stat_button" icon="fa-usd" help="show all the costs for this vehicle" groups="fleet.fleet_group_manager">
+                            <field name="cost_count" widget="statinfo" string="Costs" />
+                        </button>
+                        <button name="return_action_to_open" type="object" class="oe_stat_button" icon="fa-wrench" context="{'xml_id':'fleet_vehicle_log_services_action'}" help="show the services logs for this vehicle">
+                            <field name="service_count" widget="statinfo" string="Services" />
+                        </button>
+                        <button name="return_action_to_open" type="object" class="oe_stat_button" icon="fa-flask" context="{'xml_id':'fleet_vehicle_log_fuel_action'}" help="show the fuel logs for this vehicle">
+                            <field name="fuel_logs_count" widget="statinfo" string="Fuel" />
+                        </button>
+                        <button name="return_action_to_open" type="object" class="oe_stat_button" icon="fa-tachometer" context="{'xml_id':'fleet_vehicle_odometer_action'}" help="show the odometer logs for this vehicle">
+                            <field name="odometer_count" widget="statinfo" string="Odometer" />
+                        </button>
+                        <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button" options="{'terminology':  'archive'}" />
+                        </button>
+                    </div>
+                    <field name="image_medium" widget="image" class="oe_avatar" />
+                    <div class="oe_title">
+                        <label for="model_id" class="oe_edit_only" />
+                        <h1>
+                            <field name="model_id" placeholder="e.g. Model S" />
+                        </h1>
+                        <label for="license_plate" class="oe_edit_only" />
+                        <h2>
+                            <field name="license_plate" class="oe_inline" placeholder="e.g. PAE 326" />
+                        </h2>
+                        <label for="tag_ids" class="oe_edit_only" />
+                        <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color', 'no_create_edit': True}" />
+                    </div>
+                    <notebook>
+                        <page string="Algemene instellingen">
+                            <group col="2" string="General Properties">
+                                <group>
+                                    <field name="driver_id" />
+                                    <field name="location" />
+                                    <field name="vin_sn" />
+                                    <field name="model_year" />
+                                    <field name="company_id" groups="base.group_multi_company" />
+                                </group>
+                                <group>
+                                    <label for="odometer" />
+                                    <div class="o_row">
+                                        <field name="odometer" />
+                                        <field name="odometer_unit" />
+                                    </div>
+                                    <field name="acquisition_date" />
+                                    <field name="first_contract_date" />
+                                    <field name="car_value" />
+                                    <field name="residual_value" />
+                                </group>
+                            </group>
+                            <group col="2">
+                                <group string="Additional Properties">
+                                    <field name="seats" />
+                                    <field name="doors" />
+                                    <field name="color" />
+                                </group>
+                                <group string="Engine Options">
+                                    <field name="transmission" />
+                                    <field name="fuel_type" />
+                                    <label for="co2" />
+                                    <div class="o_row" name="co2">
+                                        <field name="co2" />
+                                        <span>g/km</span>
+                                    </div>
+                                    <field name="horsepower" />
+                                    <field name="horsepower_tax" />
+                                    <label for="power" />
+                                    <div class="o_row">
+                                        <field name="power" />
+                                        <span>kW</span>
+                                    </div>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Movetex-instellingen">
+                            <group string="Voertuiginstellingen">
+                                <group string="Metadata">
+                                    <field name="vehicle_name" />
+                                    <field name="vehicle_type_id" />
+                                    <field name="depot_stop_duration_in_seconds" />
+                                </group>
+                                <group name="Afstanden &amp; gebruik">
+                                    <field name="range_in_meter" />
+                                    <field name="abs_range_in_meter" />
+                                    <field name="travel_speed" />
+                                    <field name="usage_window_start" />
+                                    <field name="usage_window_stop" />
+                                    <field name="max_usages" />
+                                </group>
+                            </group>
+                            <group string="Locaties">
+                                <field name="depot_id" />
+                                <field name="start_location_partner_id" />
+                                <field name="stop_location_partner_id" />
+                            </group>
+                            <group>
+                                <group string="Leveringen">
+                                    <field name="min_drops" />
+                                    <field name="drop_duration_in_seconds" />
+                                    <field name="multi_drop_duration_in_seconds" />
+                                    <field name="abs_range_in_drops" />
+                                    <field name="abs_range_in_drop_size" />
+                                </group>
+                                <group string="Factoren">
+                                    <field name="drop_weight" />
+                                    <field name="distance_weight" />
+                                    <field name="usage_weight" />
+                                    <field name="usage_time_weight" />
+                                    <field name="priority_cost" />
+                                    <field name="drop_duration_speed_factor" />
+                                    
+                                    <field name="min_usage_time_violation_weight" />
+                                    <field name="max_usage_time_violation_weight" />
+                                    <field name="min_drops_violation_weight" />
+                                    <field name="range_in_meter_violation_weight" />
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                    <div class="oe_chatter">
+                            <field name="message_follower_ids" widget="mail_followers" />
+                            <field name="activity_ids" widget="mail_activity" />
+                            <field name="message_ids" widget="mail_thread" options="{'thread_level': 1}" />
+                        </div>
+                </sheet>
+            </sheet>
+        </field>
+    </record>
+</odoo>

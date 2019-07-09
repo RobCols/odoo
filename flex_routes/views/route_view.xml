@@ -1,0 +1,75 @@
+<odoo>
+    <!-- route.route action window -->
+    <record id="route_tree_action" model="ir.actions.act_window">
+        <field name="name">Routes</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">route.route</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_type">form</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                <!-- Add Text Here -->
+            </p>
+            <p>
+                <!-- More details about what a user can do with this object will be OK -->
+            </p>
+        </field>
+    </record>
+    <!-- route.route tree view -->
+    <record id="route_view_tree" model="ir.ui.view">
+        <field name="name">route.route.view.tree</field>
+        <field name="model">route.route</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="user_id" />
+                <field name="date" />
+                <field name="vehicle_id" />
+            </tree>
+        </field>
+    </record>
+    <menuitem id="route_menu_root" name="Routes" sequence="998" web_icon="flex_routes,static/description/icon.png" />
+    <menuitem id="route_tree_menu_act" name="Routes" parent="route_menu_root" action="route_tree_action" sequence="1" />
+    <!-- route.route form view -->
+    <record id="route_route_view_form" model="ir.ui.view">
+        <field name="name">route.route.view.form</field>
+        <field name="model">route.route</field>
+        <field name="arch" type="xml">
+            <form string="Route aanmaken">
+                <header>
+                    <button type="object" name="open_orders" string="Uitleveren" class="oe_stat_button" />
+                </header>
+                <sheet>
+                    <group>
+                        <field name="user_id" />
+                        <field name="date" />
+                        <field name="vehicle_id" />
+                        <field name="optimization_id" />
+                        <field name="sale_order_ids" widget="many2many" domain="[('route_id', '=', False)]" groups="flex_routes.group_manager">
+                            <tree editable="bottom">
+                                <field name="route_sequence" widget="handle" />
+                                <field name="partner_id" />
+                                <field name="name" />
+                                <field name="state" invisible="1" />
+                            </tree>
+                        </field>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <!-- model.name action window -->
+    <record id="route_route_view_form_action" model="ir.actions.act_window">
+        <field name="name">Routes</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">route.route</field>
+        <field name="view_mode">form</field>
+        <field name="view_type">form</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                <!-- Add Text Here -->
+            </p><p>
+                <!-- More details about what a user can do with this object will be OK --> 
+            </p>
+        </field>
+    </record>
+</odoo>

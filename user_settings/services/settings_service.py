@@ -75,7 +75,9 @@ class SettingsService(Component):
         self._add_to_dict_if_truthy(params, partner_vals, "city", "city")
         self._add_to_dict_if_truthy(params, partner_vals, "email", "email")
         self._add_to_dict_if_truthy(params, partner_vals, "mobilePhone", "mobile")
-        self._add_to_dict_if_truthy(params, partner_vals, "deliveryPreference", "comment")
+        self._add_to_dict_if_truthy(
+            params, partner_vals, "deliveryPreference", "comment"
+        )
         self._add_to_dict_if_truthy(
             params, partner_vals, "noFurtherDeliveries", "no_more_deliveries"
         )

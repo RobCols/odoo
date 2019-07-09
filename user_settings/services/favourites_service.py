@@ -99,4 +99,3 @@ class FavouritesService(Component):
             "partnerId": user.partner_id.id,
             "productTemplateIds": user.partner_id.favourite_product_template_ids.ids,
         }
-

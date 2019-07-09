@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template>
+	<t t-name="leaflet_marker" >
+		<div class="leaflet" />
+	</t>
+</template>

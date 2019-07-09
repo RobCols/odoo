@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<templates xml:space="preserve">
+
+    <t t-name="sale_order_barcode_header_widget"></t>
+
+    <t t-name="a">
+        <div class="o_barcode_settings flex-column h100 bg-700"></div>
+    </t>
+
+    <t t-name="sale_order_barcode_lines_widget">
+        <div class="o_barcode_header navbar navbar-expand navbar-dark bg-beta">
+            <nav class="navbar-nav mr-auto">
+                <a tabindex="" class="nav-link o_exit mr-4">
+                    <i class="fa fa-chevron-left" />
+                </a>
+                <span class="o_title navbar-text text-white">
+                    <t t-esc="widget.title + ' ' +(widget.model.saleOrder.name or 'New')"></t>
+                </span>
+            </nav>
+        </div>
+        <div class="o_sale_order_main_container o_home_menu_background">
+            <div class="o_sale_order_barcode_main_menu position-relative col-md-12">
+                <div class="text-center">
+                    <span class="o_title text-center sale_order_number">
+                        <t t-esc="widget.title + ' ' + (widget.model.saleOrder.name or 'New')"></t>
+                    </span>
+                </div>
+                <div>
+                    <div class="o_sale_order_barcode_container position-relative d-inline-block mt-4 mb-5">
+                        <div class="o_sale_order_mobile_barcode_container">
+                            <button class="btn btn-primary o_sale_order_mobile_barcode">
+                                <i class="fa fa-camera fa-2x o_mobile_barcode_camera"></i>
+                                Tap to scan
+                            </button>
+                            <img src="/product_empties_mobile/static/src/img/barcode.png" alt="Barcode" />
+                        </div>
+                        <span class="o_sale_order_barcode_laser" />
+                    </div>
+                    <div class="position-relative d-inline-block mt-4 mb-5 pull-right">
+                        <t t-foreach="widget.model.productManualEmpty" t-as="empty_product">
+                            <button class="btn btn-primary empty_product_button">
+                                <input type="hidden" class="product_empty" t-att-value="empty_product.id" />
+                                <t t-esc="empty_product.name" />
+                            </button>
+                        </t>
+                        <button class="btn btn-warning empty_product_value">Value</button>
+                    </div>
+                </div>
+                <div class="scanned_items">
+                    <div class="scanned_item_label row col-md-12">
+                        <span class="pull-left">Scanned Items</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+    <t t-name="sale_order_mobile_view_so_lines">
+        <div class="scanned_item_row col-md-12" t-att-data-product-id="product_id" t-att-data-sale-id="id">
+            <span t-esc="id" class="d-none scanned_item_col scanned_item_id" />
+            <span t-esc="qty" class="scanned_item_col pull-left scanned_item_qty" />
+            <span t-esc="product" class="scanned_item_col col-md-10 text-center scanned_item_name" />
+            <span class="pull-right scanned_item_delete">
+                <i class="fa fa-trash fa-lg"></i>
+            </span>
+        </div>
+    </t>
+    <t t-name="sale_order_mobile_view_notes">
+        <div class="sale_order_notes_label row col-md-12">
+            <span class="pull-left">Notes</span>
+        </div>
+        <div class="sale_order_notes">
+            <input type="text" name="so_notes" t-att-value="sale_order['note']"></input>
+        </div>
+        <div class="row_blank col-md-12"></div>
+    </t>
+    <t t-name="sale_order_mobile_view_button_confirm">
+        <div>
+            <button class="btn btn-danger so_button_cancel">
+               Cancel
+            </button>
+            <button class="btn btn-primary so_button_confirm">
+               Confirm
+            </button>
+        </div>
+    </t>
+
+    <t t-name="sale_order_blank_line">
+        <div class="row_blank col-md-12" style="border: 1px solid silver;"></div>
+    </t>
+
+    <t t-name="sale_line_product_for_empty">
+        <div class="o_sale_order_product_main_menu position-relative col-md-12">
+            <div class="product_empty_view_container">
+                <div class="product_info">
+                    <div class="selected_item_container">
+                        <div class="selected_item_label">
+                            <span>Selected Item:</span>
+                        </div>
+                        <div class="selected_item_name">
+                            <span t-esc="product.name"></span>
+                        </div>
+                    </div>
+                    <div class="selected_item_image">
+                        <img t-att-src="'/web/image/product.product/' + product.id + '/image'" class="img img-fluid" />
+                    </div>
+                    <div class="product_empty_barcode">
+                        <div class="o_sale_order_barcode_container position-relative d-inline-block">
+                            <div class="o_sale_order_mobile_barcode_container">
+                                <button class="btn btn-primary o_sale_order_mobile_barcode">
+                                    <i class="fa fa-camera fa-2x o_mobile_barcode_camera"></i>
+                                    Tap to scan
+                                </button>
+                                <img src="/product_empties_mobile/static/src/img/barcode.png" alt="Barcode" />
+                            </div>
+                            <span class="o_sale_order_barcode_laser" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row_blank col-md-12"></div>
+                <table class="empty_product_lst">
+                    <tr>
+                        <th class="d-none"></th>
+                        <th>Empty type</th>
+                        <th>#</th>
+                        <th>
+                            <t t-if="Object.keys(product.product_empty_ids).length > 1">
+                                <button class="btn btn-primary btn-lg button_crate">Full crate</button>
+                            </t>
+                        </th>
+                    </tr>
+                    <t t-foreach="product.product_empty_ids" t-as="empt_product">
+                        <tr class="selected_item_row" t-att-data-product-id="product.id" t-att-data-product-barcode="product.product_empty_ids[empt_product]['barcode']">
+                            <td class="d-none selected_item_col empty_product_id">
+                                <span t-esc="product.product_empty_ids[empt_product]['product_id'][0]" />
+                            </td>
+                            <td class="selected_item_col empty_product_name">
+                                <span t-esc="product.product_empty_ids[empt_product]['product_id'][1]" />
+                            </td>
+                            <td class="selected_item_col empty_product_qty">
+                                <span t-esc="product.product_empty_ids[empt_product]['quantity']" />
+                            </td>
+                            <td class="selected_item_col empty_product_buttons">
+                                <t t-if="product.product_empty_ids[empt_product]['button_quantity'] > 1">
+                                    <button class="btn btn-lg btn-primary button_qty" t-att-data="product.product_empty_ids[empt_product]['button_quantity']">
+                                        +
+                                        <t t-esc="product.product_empty_ids[empt_product]['button_quantity']"></t>
+                                    </button>
+                                </t>
+                                <button class="btn btn-primary btn-lg button_qty" data="1">+1</button>
+                                <button class="btn btn-danger btn-lg button_qty" data="-1">-1</button>
+                            </td>
+                        </tr>
+                    </t>
+                    <t t-if="!Object.keys(product.product_empty_ids).length">
+                        <div>
+                            <b>
+                            No empty product configured in this product.
+                            </b>
+                        </div>
+                        <t t-call="sale_order_blank_line" />
+                    </t>
+                </table>
+                <div class="row_blank col-md-12"></div>
+                <div class="button_add_sol">
+                    <button class="btn btn-danger product_button_back">
+                        Back
+                    </button>
+                    <button class="btn btn-primary product_button_add">
+                        Add
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- </div> -->
+    </t>
+
+</templates>

@@ -3,7 +3,7 @@ from odoo import api, fields, models
 
 class ResCity(models.Model):
     _inherit = "res.city"
-    _order = 'zipcode'
+    _order = "zipcode"
 
     @api.multi
     def name_get(self):
@@ -12,6 +12,8 @@ class ResCity(models.Model):
 
     @api.model
     def name_search(self, name="", args=None, operator="ilike", limit=100):
-        return list(self.search(
-            ["|", ("name", operator, name), ("zipcode", '=ilike', name + '%')]
-        ).name_get())
+        return list(
+            self.search(
+                ["|", ("name", operator, name), ("zipcode", "=ilike", name + "%")]
+            ).name_get()
+        )

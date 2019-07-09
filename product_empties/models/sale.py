@@ -59,7 +59,9 @@ class SaleOrder(models.Model):
             )
 
     @api.multi
-    def add_update_empty_product_line(self, product_id, quantity, do_not_update=False):
+    def add_update_empty_product_line(
+        self, product_id, quantity, do_not_update=False, add=True
+    ):
         """Add or update empty line"""
 
         self.ensure_one()
@@ -68,7 +70,15 @@ class SaleOrder(models.Model):
         )
         if line_exist and not do_not_update:
             empty_line = line_exist[:1]
-            empty_line.write({"product_uom_qty": empty_line.product_uom_qty + quantity})
+            if add:
+                empty_line.write(
+                    {"product_uom_qty": empty_line.product_uom_qty + quantity}
+                )
+            else:
+                if quantity < 0:
+                    empty_line.write({"product_uom_qty": quantity})
+                else:
+                    empty_line.write({"product_uom_qty": -quantity})
             order_line = empty_line
         else:
             vals = {
@@ -108,113 +118,15 @@ class SaleOrder(models.Model):
         # Add code here
         return super(SaleOrder, self).create(values)
 
-    # region sections...
-    # def get_next_sequence(self, product_type='regular'):
-    #     if product_type == 'empty':
-    #         seq_product_empty = list(
-    #             self.order_line.filtered(
-    #                 lambda line:
-    #                 line.product_id.is_empty
-    #             ).mapped('sequence')
-    #         )
-    #         if not seq_product_empty:
-    #             seq_product_empty = self.get_sequence_section(
-    #                 product_type=product_type)
-    #         else:
-    #             seq_product_empty = max(seq_product_empty)
-    #         seq_product_regular = self.get_sequence_section(
-    #             product_type='regular')
-    #         if seq_product_regular <= seq_product_empty:
-    #             seq_product_empty = self.resequence_empty_product_lines()
-    #             self.resequence_regular_product_lines(seq_product_empty)
-    #         return seq_product_empty + 1
-    #     elif product_type == 'regular':
-    #         if not self.order_line:
-    #             return 200
-    #         return (max(list(self.order_line.mapped('sequence')))) + 1
-    #     else:
-    #         if not self.order_line:
-    #             return 200
-    #         return (max(list(self.order_line.mapped('sequence')))) + 1
-
-    # def change_sequence(self, sol_lines, start_seq=0):
-    #     curr_seq = start_seq
-    #     for line in sol_lines:
-    #         curr_seq += 1
-    #         line.sequence = curr_seq
-    #     return curr_seq
-
-    # def get_sequence_section(self, product_type='regular'):
-    #     section = self.get_section_line(product_type=product_type)
-    #     return section.sequence
-
-    # def create_section(self, section_name):
-    #     vals = {
-    #         'name': section_name,
-    #         'display_type': 'line_section',
-    #         'sequence': 0,
-    #         'order_id': self.id,
-    #     }
-    #     section = self.env['sale.order.line'].create(vals)
-    #     return section
-
-    # def get_section_line(self, product_type='regular'):
-    #     ICPSudo = self.env['ir.config_parameter'].sudo()
-    #     section_ref = self.get_section_ref(product_type=product_type)
-    #     if not section_ref:
-    #         section_ref = 'empty_product.section_name_regular_products'
-    #     section_name = ICPSudo.get_param(section_ref)
-    #     section = self.order_line.filtered(
-    #         lambda line:
-    #         line.display_type == 'line_section'
-    #         and line.name == section_name
-    #     )
-    #     if not section:
-    #         section = self.create_section(section_name=section_name)
-    #     return section[:1]
-
-    # def get_section_ref(self, product_type='regular'):
-    #     if product_type == 'empty':
-    #         return 'empty_product.section_name_empty_products'
-    #     elif product_type == 'regular':
-    #         return 'empty_product.section_name_regular_products'
-    #     else:
-    #         return False
-
-    # # Section Empty
-    # def resequence_empty_product_lines(self):
-    #     empty_product_lines = self.order_line.filtered(
-    #         lambda line:
-    #         line.product_id.is_empty
-    #         and not line.display_type
-    #     )
-    #     empty_section = self.get_section_line(product_type='empty')
-    #     empty_section.sequence = 0
-    #     curr_seq = self.change_sequence(
-    #         sol_lines=empty_product_lines,
-    #         start_seq=empty_section.sequence)
-    #     return curr_seq
-
-    # # Section Normal
-
-    # def resequence_regular_product_lines(self, seq_product_empty):
-    #     regular_product_lines = self.order_line.filtered(
-    #         lambda line:
-    #         not line.product_id.is_empty
-    #         and not line.display_type
-    #     )
-    #     regular_section = self.get_section_line(product_type='regular')
-    #     regular_section.sequence = seq_product_empty + 200
-    #     curr_seq = self.change_sequence(
-    #         sol_lines=regular_product_lines,
-    #         start_seq=regular_section.sequence)
-    #     return curr_seq
-    # endregion
-
     @api.multi
     def copy(self, default=None):
         self = self.with_context(do_not_add_empty_products=True)
         return super(SaleOrder, self).copy(default)
+
+    @api.model
+    def load(self, fields, data):
+        self = self.with_context(do_not_add_empty_products=True)
+        return super(SaleOrder, self).load(fields, data)
 
 
 class SaleOrderLine(models.Model):
@@ -250,12 +162,6 @@ class SaleOrderLine(models.Model):
         order_id = self.env["sale.order"].browse(values.get("order_id"))
         if product_id and not values.get("display_type") == "line_section":
             product = self.env["product.product"].browse(product_id)
-            # if product.is_empty:
-            #     values['sequence'] = order_id.get_next_sequence(
-            #         product_type='empty')
-            # else:
-            #     values['sequence'] = order_id.get_next_sequence(
-            #         product_type='regular')
         so_lines = super(SaleOrderLine, self).create(values)
         for so_line in so_lines:
             order_id = so_line.order_id
@@ -355,3 +261,8 @@ class SaleOrderLine(models.Model):
     def copy(self, default=None):
         self = self.with_context(do_not_add_empty_products=True)
         return super(SaleOrderLine, self).copy(default)
+
+    @api.model
+    def load(self, fields, data):
+        self = self.with_context(do_not_add_empty_products=True)
+        return super(SaleOrderLine, self).load(fields, data)

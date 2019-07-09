@@ -1,0 +1,46 @@
+<odoo>
+    <!-- route.route inherit form view -->
+    <record id="route_route_view_form" model="ir.ui.view">
+        <field name="name">route.route.inherit.view.form</field>
+        <field name="model">route.route</field>
+        <field name="inherit_id" ref="flex_routes.route_route_view_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='sale_order_ids']" position="replace" />
+            <xpath expr="sheet" position="inside">
+                <notebook>
+                    <page string="Orders" groups="flex_routes.group_manager">
+                        <field name="sale_order_ids" widget="many2many" domain="[('route_id', '=', False)]" groups="flex_routes.group_manager">
+                            <tree editable="bottom">
+                                <field name="route_sequence" widget="handle" />
+                                <field name="partner_id" />
+                                <field name="name" />
+                                <field name="state" invisible="1" />
+                            </tree>
+                        </field>
+                    </page>
+                    <page string="Picking">
+                        <field name="route_picking_ids">
+                            <tree editable="bottom" decoration-success="state==True" decoration-danger="state==False">
+                                <field name="product_qty" />
+                                <field name="product_id" />
+                                <field name="stock_location" />
+                                <field name="state" />
+                            </tree>
+                        </field>
+                    </page>
+                    <page string="Loading">
+                        <field name="route_loading_ids" widget="many2many">
+                            <tree editable="bottom" default_order="route_sequence desc" decoration-success="state==True" decoration-danger="state==False">
+                                <field name="route_sequence" invisible="1"/>
+                                <field name="order_id" />
+                                <field name="product_uom_qty" />
+                                <field name="product_id" />
+                                <field name="state" />
+                            </tree>
+                        </field>
+                    </page>
+                </notebook>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,135 @@
+<odoo>
+    <!-- sale.order form view -->
+    <record id="flex_routes_sale_view_form" model="ir.ui.view">
+        <field name="name">sale.order.view.form</field>
+        <field name="model">sale.order</field>
+        <field name="arch" type="xml">
+            <form string="">
+                <sheet>
+                    <header>
+                        <field name="google_shipping_url" widget="url" text_field="delivery_address_string" />
+                    </header>
+                    <field name="delivery_address_string" invisible="1" />
+                    <notebook colspan="4">
+                        <page string="House">
+                            <field name="state" invisible="1" />
+                            <field name="shipping_street_image" widget="image" />
+                            <field name="shipping_satellite_image" widget="image" />
+                        </page>
+                        <page string="Dropoffs">
+                            <field name="non_empty_order_line" widget="section_and_note_one2many">
+                                <tree editable="false">
+                                    <field name="name" />
+                                    <field name="product_id" />
+                                    <field name="product_uom_qty" />
+                                </tree>
+                                <kanban class="o_kanban_mobile">
+                                    <field name="name" />
+                                    <field name="product_id" />
+                                    <field name="product_uom_qty" />
+                                    <field name="product_uom" groups="uom.group_uom" />
+                                    <field name="price_subtotal" />
+                                    <field name="price_tax" invisible="1" />
+                                    <field name="price_total" invisible="1" />
+                                    <field name="price_unit" />
+                                    <field name="display_type" />
+                                    <field name="tax_id" invisible="1" />
+                                    <templates>
+                                        <t t-name="kanban-box">
+                                            <div t-attf-class="oe_kanban_card oe_kanban_global_click {{ record.display_type.raw_value ? 'o_is_' + record.display_type.raw_value : '' }}">
+                                                <t t-if="!record.display_type.raw_value">
+                                                    <div class="row">
+                                                        <div class="col-8">
+                                                            <strong>
+                                                                <span>
+                                                                    <t t-esc="record.product_id.value" />
+                                                                </span>
+                                                            </strong>
+                                                        </div>
+                                                        <div class="col-4">
+                                                            <strong>
+                                                                <span class="float-right text-right">
+                                                                    <t t-esc="record.product_uom_qty.value" />
+                                                                    <t t-esc="record.product_uom.value" />
+                                                                </span>
+                                                            </strong>
+                                                        </div>
+                                                    </div>
+                                                </t>
+                                            </div>
+                                        </t>
+                                    </templates>
+                                </kanban>
+                            </field>
+                        </page>
+                        <page string="Pickups">
+                            <button type="object" name="scan_pickups" string="Register pickups" />
+                            <field name="empty_order_line" widget="section_and_note_one2many">
+                                <tree editable="false">
+                                    <field name="name" />
+                                    <field name="product_id" />
+                                    <field name="product_uom_qty" />
+                                </tree>
+                                <kanban class="o_kanban_mobile">
+                                    <field name="name" />
+                                    <field name="product_id" />
+                                    <field name="product_uom_qty" />
+                                    <field name="product_uom" groups="uom.group_uom" />
+                                    <field name="price_subtotal" />
+                                    <field name="price_tax" invisible="1" />
+                                    <field name="price_total" invisible="1" />
+                                    <field name="price_unit" />
+                                    <field name="display_type" />
+                                    <field name="tax_id" invisible="1" />
+                                    <templates>
+                                        <t t-name="kanban-box">
+                                            <div t-attf-class="oe_kanban_card oe_kanban_global_click {{ record.display_type.raw_value ? 'o_is_' + record.display_type.raw_value : '' }}">
+                                                <t t-if="!record.display_type.raw_value">
+                                                    <div class="row">
+                                                        <div class="col-8">
+                                                            <strong>
+                                                                <span>
+                                                                    <t t-esc="record.product_id.value" />
+                                                                </span>
+                                                            </strong>
+                                                        </div>
+                                                        <div class="col-4">
+                                                            <strong>
+                                                                <span class="float-right text-right">
+                                                                    <t t-esc="record.product_uom_qty.value" />
+                                                                    <t t-esc="record.product_uom.value" />
+                                                                </span>
+                                                            </strong>
+                                                        </div>
+                                                    </div>
+                                                </t>
+                                            </div>
+                                        </t>
+                                    </templates>
+                                </kanban>
+                            </field>
+                        </page>
+                    </notebook>
+                    <button type="object" name="set_delivery_state_to_delivered" string="Afgeleverd" class="btn btn-primary" />
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <!-- flex_routes_sale_view_form_action action window -->
+    <record id="flex_routes_sale_view_form_action" model="ir.actions.act_window">
+        <field name="name">flex_routes_sale_view_form_action.action</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">sale.order</field>
+        <field name="view_mode">form</field>
+        <field name="view_type">form</field>
+        <field name="view_id" ref="flex_routes_sale_view_form" />
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                <!-- Add Text Here -->
+            </p>
+            <p>
+                <!-- More details about what a user can do with this object will be OK -->
+            </p>
+        </field>
+    </record>
+</odoo>

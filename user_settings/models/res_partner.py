@@ -19,5 +19,11 @@ class ResPartner(models.Model):
     )
 
     no_more_deliveries = fields.Boolean("No more deliveries required", default=False)
-    
-    favourite_product_template_ids = fields.Many2many(comodel_name='product.template', string='Favourite products')
+
+    favourite_product_template_ids = fields.Many2many(
+        comodel_name="product.template", string="Favourite products"
+    )
+
+    holiday_ids = fields.One2many(
+        comodel_name="res.partner.holiday", inverse_name="partner_id", string="Holidays"
+    )
