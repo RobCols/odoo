@@ -9,7 +9,11 @@
     "license": "",
     "contributors": [""],
     "depends": ["base", "sale", "flex_routes"],
-    "data": ["views/route_picking_line.xml", "security/ir.model.access.csv"],
+    "data": [
+        "views/route_picking_line.xml",
+        "views/product_template.xml",
+        "security/ir.model.access.csv",
+    ],
     "installable": True,
     "auto_install": False,
     "application": False,

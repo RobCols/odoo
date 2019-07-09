@@ -119,6 +119,8 @@ class RouteOptimization(models.Model):
                     order.route_id = created_route.id
                     order.route_sequence = delivery["indexInRoute"]
                 self.route_ids |= created_route
+            for route in self.route_ids:
+                route.generate_route_picking_ids()
 
     @api.model
     def get_depots_from_vehicle(self, payload):
@@ -131,15 +133,21 @@ class RouteOptimization(models.Model):
                 continue
             lat = self.env["res.partner"].browse(int(v["depotId"])).partner_latitude
             lng = self.env["res.partner"].browse(int(v["depotId"])).partner_longitude
-            if not lat or not lng: 
-                self.env["res.partner"].browse(int(v["depotId"])).geocode_one_partner_movetex()
+            if not lat or not lng:
+                self.env["res.partner"].browse(
+                    int(v["depotId"])
+                ).geocode_one_partner_movetex()
             depots.append(
                 {
                     "id": v["depotId"],
                     "location": {
                         "id": v["depotId"],
-                        "lat": self.env["res.partner"].browse(int(v["depotId"])).partner_latitude,
-                        "lon": self.env["res.partner"].browse(int(v["depotId"])).partner_longitude
+                        "lat": self.env["res.partner"]
+                        .browse(int(v["depotId"]))
+                        .partner_latitude,
+                        "lon": self.env["res.partner"]
+                        .browse(int(v["depotId"]))
+                        .partner_longitude,
                     },
                 }
             )
@@ -162,6 +170,5 @@ class RouteOptimization(models.Model):
         }
 
         r = requests.post("https://idp.litefleet.io/connect/token", data=payload)
-        print(r.json(), file=sys.stderr)
 
         return r.json()["access_token"]

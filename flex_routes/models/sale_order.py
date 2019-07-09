@@ -1,5 +1,6 @@
-from odoo import api, fields, models
+from odoo import api, fields, models, _
 from odoo.tools import safe_eval
+from odoo.exceptions import UserError
 
 
 class SaleOrder(models.Model):
@@ -10,7 +11,7 @@ class SaleOrder(models.Model):
     optimization_id = fields.Many2one("route.optimization")
 
     delivery_address_string = fields.Char(compute="_compute_delivery_address_string")
-
+    depot_id = fields.Many2one("res.partner", related="partner_shipping_id.depot_id")
     google_shipping_url = fields.Char(compute="_compute_google_shipping_url")
     shipping_street_image = fields.Binary(related="partner_shipping_id.street_image")
     shipping_satellite_image = fields.Binary(
@@ -120,6 +121,11 @@ class SaleOrder(models.Model):
     @api.model
     def get_movetex_data(self):
         self.ensure_one()
+        if not self.depot_id:
+            raise UserError(
+                _("Depot missing on partner '%s'") % self.partner_shipping_id.name
+            )
+
         if (
             not self.partner_shipping_id.partner_longitude
             or not self.partner_shipping_id.partner_latitude
@@ -136,7 +142,7 @@ class SaleOrder(models.Model):
                 "startInSeconds": 10000,  # TODO
                 "stopInSeconds": 12000,  # TODO
             },
-            "depotId": 1,
+            "depotId": self.depot_id.id,
             "preferredTransportationMode": "Car",  # TODO
             "allowedTransportationModes": "Car",  # TODO
             "revenue": 15,  # TODO

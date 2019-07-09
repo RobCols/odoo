@@ -75,7 +75,10 @@ class SaleOrder(models.Model):
                     {"product_uom_qty": empty_line.product_uom_qty + quantity}
                 )
             else:
-                empty_line.write({"product_uom_qty": quantity})
+                if quantity < 0:
+                    empty_line.write({"product_uom_qty": quantity})
+                else:
+                    empty_line.write({"product_uom_qty": -quantity})
             order_line = empty_line
         else:
             vals = {

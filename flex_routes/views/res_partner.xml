@@ -5,15 +5,13 @@
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base_geolocalize.view_crm_partner_geo_form" />
         <field name="arch" type="xml">
+            <button name="geo_localize" position="replace">
+                <button name="geocode_one_partner_movetex" icon="fa-check" string="Geolocate" type="object" class="btn btn-secondary" />
+            </button>
             <xpath expr="//page[@name='geo_location']" position="inside">
                 <group>
                     <group col="1" string="Routing point">
-                        <widget 
-                            name="leaflet_marker" 
-                            lat="partner_latitude" 
-                            lng="partner_longitude" 
-                            zoom_field="routing_zoomlevel" 
-                            description="Routing Geo">
+                        <widget name="leaflet_marker" lat="partner_latitude" lng="partner_longitude" zoom_field="routing_zoomlevel" description="Routing Geo">
                             <field name="partner_latitude" />
                             <field name="partner_longitude" />
                             <field name="routing_zoomlevel" />
@@ -29,6 +27,14 @@
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base.view_partner_form" />
         <field name="arch" type="xml">
+            <notebook position="before">
+                <group>
+                    <group>
+                        <field name="is_depot" />
+                        <field name="depot_id" attrs="{'invisible': [('is_depot', '=', True)]}" />
+                    </group>
+                </group>
+            </notebook>
             <page name="internal_notes" position="replace">
                 <page name="delivery_info" string="Delivery info">
                     <field name="comment" string="Delivery info" />
@@ -136,12 +142,7 @@
                                                 <field name="satellite_image" widget="image" string="Satellietbeeld" />
                                             </group>
                                             <group col="1" string="Routing point">
-                                                <widget 
-                                                    name="leaflet_marker" 
-                                                    lat="partner_latitude" 
-                                                    lng="partner_longitude" 
-                                                    zoom_field="routing_zoomlevel" 
-                                                    description="Routing Geo">
+                                                <widget name="leaflet_marker" lat="partner_latitude" lng="partner_longitude" zoom_field="routing_zoomlevel" description="Routing Geo">
                                                     <field name="partner_latitude" />
                                                     <field name="partner_longitude" />
                                                     <field name="routing_zoomlevel" />

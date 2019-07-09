@@ -31,7 +31,7 @@ class SaleOrder(models.Model):
                     product_id=product_id, quantity=quantity, do_not_update=True
                 )
                 new_so_lines |= order_line
-        else:
+        if old_lines:
             for old_line in old_lines:
                 product_id = old_line["product_id"][0]
                 quantity = old_line["product_uom_qty"]
@@ -49,6 +49,4 @@ class SaleOrder(models.Model):
                     new_so_lines |= order_line
         if so_note:
             self.note = so_note
-        if new_so_lines:
-            return True
-        return False
+        return True

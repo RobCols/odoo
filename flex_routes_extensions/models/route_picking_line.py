@@ -8,4 +8,5 @@ class RoutePickingLine(models.Model):
     product_qty = fields.Integer("#")
     product_id = fields.Many2one("product.product", "Product")
     route_id = fields.Many2one("route.route")
-    state = fields.Boolean("Ingeladen", default=False)
+    state = fields.Boolean("Picked", default=False)
+    stock_location = fields.Char(related="product_id.stock_location")

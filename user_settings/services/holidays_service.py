@@ -44,16 +44,20 @@ class FavouritesService(Component):
         """
         uid = self.env.uid
         user = self._get(uid)
-        to_unlink = self.env["res.partner.holiday"].sudo().search(
-            [
-                ("partner_id", "=", user.partner_id.id),
-                ("holiday_date", "in", params["holidays"]),
-            ]
+        to_unlink = (
+            self.env["res.partner.holiday"]
+            .sudo()
+            .search(
+                [
+                    ("partner_id", "=", user.partner_id.id),
+                    ("holiday_date", "in", params["holidays"]),
+                ]
+            )
         )
-        
+
         if not to_unlink:
             raise MissingError("holiday not found")
-        
+
         to_unlink.unlink()
 
         return self._to_json(self._get(uid))
@@ -101,9 +105,10 @@ class FavouritesService(Component):
         return self._validator_return_get()
 
     def _to_json(self, user):
-        user = user.sudo()
         return {
             "uid": user.id,
             "partnerId": user.partner_id.id,
-            "holidays": list(map(str, user.partner_id.holiday_ids.mapped("holiday_date")))
+            "holidays": list(
+                map(str, user.partner_id.holiday_ids.mapped("holiday_date"))
+            ),
         }

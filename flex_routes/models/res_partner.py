@@ -1,8 +1,7 @@
-from odoo import models, api, fields
+from odoo import models, api, fields, exceptions, _
 import datetime
 import requests
 import json
-from odoo import exceptions, _
 
 
 class ResPartner(models.Model):
@@ -12,8 +11,11 @@ class ResPartner(models.Model):
 
     satellite_image = fields.Binary("Satellietbeeld")
     street_image = fields.Binary("Straatbeeld")
-
+    is_depot = fields.Boolean("Is depot", default=False)
     has_delivery_address = fields.Boolean(compute="_compute_has_delivery_address")
+    depot_id = fields.Many2one(
+        "res.partner", string="Depot-adres", domain=[("is_depot", "=", True)]
+    )
 
     @api.depends("child_ids")
     def _compute_has_delivery_address(self):
@@ -30,7 +32,6 @@ class ResPartner(models.Model):
     @api.multi
     def geocode_one_partner_movetex(self):
         self.ensure_one()
-
         token = self.env["route.optimization"].get_token()
 
         headers = {"Authorization": f"Bearer {token}"}

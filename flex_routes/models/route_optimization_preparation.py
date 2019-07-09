@@ -23,3 +23,11 @@ class RouteOptimizationPreparation(models.Model):
         )
         payload["vehicleId"] = f"{payload['vehicleId']}_{self.user_id.id}"
         return payload
+
+    @api.multi
+    @api.depends("vehicle_id", "user_id")
+    def name_get(self):
+        return [
+            (r.id, (f"{r.vehicle_id.license_plate} ({r.user_id.display_name})"))
+            for r in self
+        ]

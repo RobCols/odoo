@@ -36,7 +36,7 @@
         <field name="arch" type="xml">
             <form string="Route aanmaken">
                 <header>
-                    <button type="object" name="open_orders" string="Orders" class="oe_stat_button" />
+                    <button type="object" name="open_orders" string="Uitleveren" class="oe_stat_button" />
                 </header>
                 <sheet>
                     <group>

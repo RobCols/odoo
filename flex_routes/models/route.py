@@ -29,11 +29,16 @@ class RouteRoute(models.Model):
                 ),
                 (self.env.ref("flex_routes.flex_routes_sale_view_form").id, "form"),
             ],
-            "target": "self",
+            "target": "current",
             "res_model": "sale.order",
+            "active_ids": self.sale_order_ids.ids,
+            "res_ids": self.sale_order_ids.ids,
+            "ids": self.sale_order_ids.ids,
+            "context": {
+                "active_ids": self.sale_order_ids.ids,
+                "res_ids": self.sale_order_ids.ids,
+                "ids": self.sale_order_ids.ids,
+            },
             "type": "ir.actions.act_window",
             "domain": [("id", "in", self.sale_order_ids.ids)],
-            "flags": {
-                "form": {"action_buttons": True, "options": {"clear_breadcrumbs": True}}
-            },
         }

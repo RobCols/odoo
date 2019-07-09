@@ -57,48 +57,7 @@ odoo.define('product_empties_mobile.SaleOrderMobile', function (require) {
 
         _onExit: function (ev) {
             ev.stopPropagation();
-            var self = this;
-            let previous_action = this.model.previous_action;
-            let active_id = this.params['context']['active_id'];
-            let order_id = this.params['context']['so_id']
-            let active_ids = this.params['context']['active_ids']
-            let res_ids = this.params["context"]["ids"];
-            let model_name = this.params['context']['active_model'];
-            let ctx = this.params['context']
-            this.mutex.exec(function () {
-
-                if (previous_action) {
-                    rpc.query({
-                        model: 'route.route',
-                        method: 'open_orders',
-                        context: ctx,
-                        args: [active_id]
-                    }).then(function (response) {
-                        response["view_type"] = "list"
-                        response["res_id"] = order_id;
-                        response["context"] = {}
-                        response["context"]["active_id"] = active_id
-                        response["context"]["active_ids"] = active_ids
-                        response["context"]["res_ids"] = res_ids
-                        console.log(response);
-                        var $so_container = self.$el.find('div.o_sale_order_barcode_main_menu');
-                        var $product_container = self.$el.find('div.o_sale_order_product_main_menu');
-                        $product_container.remove();
-                        $so_container.remove();
-                        self.do_action(response, {
-                            "res_id": order_id,
-                            "res_ids": res_ids,
-                            "context": response["context"],
-                            "clear_breadcrumbs": true,
-                        });
-                    })
-                }
-                else {
-                    self.do_action('sale.action_quotations_with_onboarding', {
-                        clear_breadcrumbs: true,
-                    });
-                }
-            });
+            this.trigger_up('history_back');
         },
 
         // Sale Order Screen
@@ -124,7 +83,6 @@ odoo.define('product_empties_mobile.SaleOrderMobile', function (require) {
                 this.$el.find(".o_sale_order_mobile_barcode").remove();
             }
             if (this.model.saleOrderLines) {
-                console.log(Object.keys(this.model.empties))
                 for (let item of Object.keys(this.model.saleOrderLines)) {
                     if ($.inArray(this.model.saleOrderLines[item]['product_id'][0] + "", Object.keys(this.model.empties)) > -1) {
                         let quantity = 0;
@@ -425,6 +383,14 @@ odoo.define('product_empties_mobile.SaleOrderMobile', function (require) {
             var $line = $(ev.currentTarget).closest('div.scanned_item_row');
             var sale_line_id = $line.find('.scanned_item_id').text()
             delete self.model.saleOrderLines[sale_line_id]
+            if (!sale_line_id.startsWith("new")) {
+                rpc.query({
+                    model: 'sale.order.line',
+                    method: 'unlink',
+                    context: {},
+                    args: [Number(sale_line_id)]
+                })
+            }
             $line.remove();
         },
 
@@ -553,8 +519,6 @@ odoo.define('product_empties_mobile.SaleOrderMobile', function (require) {
             var $product_container = self.$el.find('div.o_sale_order_product_main_menu');
             $product_container.remove();
             $so_container.removeClass('d-none');
-            $back_btn = self.$el.find('.o_back_button')
-            $back_btn.remove();
         },
     });
 

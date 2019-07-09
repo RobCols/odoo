@@ -24,4 +24,6 @@ class ResPartner(models.Model):
         comodel_name="product.template", string="Favourite products"
     )
 
-    holiday_ids = fields.One2many(comodel_name="res.partner.holiday", inverse_name="partner_id", string="Holidays")
+    holiday_ids = fields.One2many(
+        comodel_name="res.partner.holiday", inverse_name="partner_id", string="Holidays"
+    )
