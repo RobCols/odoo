@@ -129,7 +129,7 @@ class RouteOptimization(models.Model):
         if not vehicles:
             return
         for v in vehicles:
-            if any(d.id == v["depotId"] for d in depots):
+            if any(d["id"] == v["depotId"] for d in depots):
                 continue
             lat = self.env["res.partner"].browse(int(v["depotId"])).partner_latitude
             lng = self.env["res.partner"].browse(int(v["depotId"])).partner_longitude
