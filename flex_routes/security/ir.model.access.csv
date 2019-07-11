@@ -1,4 +1,8 @@
 id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
-access_route_route,access_route_route,model_route_route,base.group_user,1,1,1,1
-access_route_optimization,access_route_optimization,model_route_optimization,base.group_user,1,1,1,1
-access_route_optimization_preparation,access_route_optimization_preparation,model_route_optimization_preparation,base.group_user,1,1,1,1
+access_route_route,access_route_route,model_route_route,flex_routes.group_manager,1,1,1,1
+access_route_optimization,access_route_optimization,model_route_optimization,flex_routes.group_manager,1,1,1,1
+access_route_optimization_preparation,access_route_optimization_preparation,model_route_optimization_preparation,flex_routes.group_manager,1,1,1,1
+read_route_route,read_route_route,model_route_route,base.group_user,1,0,0,0
+read_write_route_route,read_write_route_route,model_route_route,flex_routes.group_carrier,1,1,0,0
+read_write_sale_order,read_write_sale_order,model_sale_order,flex_routes.group_carrier,1,1,0,0
+read_fleet_vehicle,read_fleet_vehicle,model_fleet_vehicle,flex_routes.group_carrier,1,1,0,0

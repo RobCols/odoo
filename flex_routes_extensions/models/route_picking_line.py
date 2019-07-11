@@ -10,3 +10,17 @@ class RoutePickingLine(models.Model):
     route_id = fields.Many2one("route.route")
     state = fields.Boolean("Picked", default=False)
     stock_location = fields.Char(related="product_id.stock_location")
+    flex_color = fields.Integer(compute="_compute_flex_color")
+
+    @api.depends("state")
+    def _compute_flex_color(self):
+        for record in self:
+            if record.state:
+                record.flex_color = 10
+                continue
+            record.flex_color = 2
+
+    @api.multi
+    def mark_as_picked(self):
+        for record in self:
+            record.state = not record.state

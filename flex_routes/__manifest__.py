@@ -14,7 +14,6 @@
         "fleet",
         "base_geolocalize",
         "base_address_extended",
-        "web_widget_leaflet_map",
         "web_widget_url_advanced",
     ],
     "data": [

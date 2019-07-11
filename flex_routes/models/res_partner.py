@@ -42,7 +42,7 @@ class ResPartner(models.Model):
             "postalCode": self.zip,
             "city": self.city,
             "country": self.country_id.name,
-            "distanceComputationMethod": "Here",
+            "distanceComputationMethod": "*",
         }
 
         r = requests.post(

@@ -29,6 +29,16 @@ class SaleOrder(models.Model):
         default="undelivered",
     )
 
+    flex_color = fields.Integer(compute="_compute_flex_color")
+
+    @api.depends("delivery_state")
+    def _compute_flex_color(self):
+        for record in self:
+            if record.delivery_state == "undelivered":
+                record.flex_color = 2
+                continue
+            record.flex_color = 10
+
     @api.multi
     def set_delivery_state_to_delivered(self):
         self.ensure_one()
