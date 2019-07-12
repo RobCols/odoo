@@ -12,7 +12,7 @@
                 <field name="flex_color" />
                 <templates>
                     <t t-name="kanban-box">
-                        <div t-attf-class="oe_kanban_card oe_kanban_global_click #{kanban_color(record.flex_color.raw_value)}">
+                        <div t-attf-class="oe_kanban_card #{kanban_color(record.flex_color.raw_value)}">
                             <div class="row">
                                 <strong>
                                     <table class="table table-bordered">
@@ -66,7 +66,7 @@
                 <field name="flex_color" />
                 <templates>
                     <t t-name="kanban-box">
-                        <div t-attf-class="oe_kanban_card oe_kanban_global_click #{kanban_color(record.flex_color.raw_value)}">
+                        <div t-attf-class="oe_kanban_card #{kanban_color(record.flex_color.raw_value)}">
                             <div class="row">
                                 <table class="table table-bordered">
                                     <thead>
@@ -117,7 +117,7 @@
                 <field name="flex_color" />
                 <templates>
                     <t t-name="kanban-box">
-                        <div t-attf-class="oe_kanban_card oe_kanban_global_click #{kanban_color(record.flex_color.raw_value)}">
+                        <div t-attf-class="oe_kanban_card #{kanban_color(record.flex_color.raw_value)}">
                             <div class="row">
                                 <div class="col-8">
                                     <strong>
@@ -153,7 +153,7 @@
                         <field name="sale_order_ids" widget="many2many" domain="[('route_id', '=', False)]" groups="flex_routes.group_manager" context="{'kanban_view_ref': 'flex_routes_extensions.route_sale_order_view_kanban'}">
                             <tree editable="bottom">
                                 <field name="route_sequence" widget="handle" />
-                                <field name="partner_id" />
+                                <field name="partner_id" readonly="1" />
                                 <field name="name" />
                                 <field name="state" invisible="1" />
                             </tree>
@@ -162,9 +162,9 @@
                     <page string="Picking">
                         <field name="route_picking_ids">
                             <tree editable="bottom" decoration-success="state==True" decoration-danger="state==False">
-                                <field name="product_qty" />
-                                <field name="product_id" />
-                                <field name="stock_location" />
+                                <field name="product_qty" readonly="1" />
+                                <field name="product_id" readonly="1" />
+                                <field name="stock_location" readonly="1" />
                                 <field name="state" />
                                 <field name="flex_color" invisible="1" />
                             </tree>
@@ -174,9 +174,9 @@
                         <field name="route_loading_ids" widget="many2many">
                             <tree editable="bottom" default_order="route_sequence desc" decoration-success="state==True" decoration-danger="state==False">
                                 <field name="route_sequence" invisible="1" />
-                                <field name="order_id" />
-                                <field name="product_uom_qty" />
-                                <field name="product_id" />
+                                <field name="order_id" readonly="1" />
+                                <field name="product_uom_qty" readonly="1" />
+                                <field name="product_id" readonly="1" />
                                 <field name="state" />
                                 <field name="flex_color" invisible="1" />
                             </tree>

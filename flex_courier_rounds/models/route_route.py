@@ -7,6 +7,7 @@ class RouteRoute(models.Model):
     depot_latitude = fields.Float(compute="_compute_depot_coords")
     depot_longitude = fields.Float(compute="_compute_depot_coords")
     routing_zoomlevel = fields.Integer()
+
     @api.depends("vehicle_id", "vehicle_id.depot_id")
     def _compute_depot_coords(self):
         for record in self:

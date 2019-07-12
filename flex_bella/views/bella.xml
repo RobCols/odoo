@@ -129,7 +129,7 @@
     </record>
 
     <!-- This Menu Item will appear in the Upper bar, that's why It needs NO parent or action -->
-    <menuitem id="bella_menu_root" name="Bella Configuration" sequence="999" web_icon="flex_bella,static/description/icon.png"/>
+    <menuitem id="bella_menu_root" name="Bella Configuration" sequence="999" web_icon="flex_bella,static/description/icon.png" groups="base.group_erp_manager"/>
     <!-- This Menu Item must have a parent and an action -->
     <menuitem id="bella_question_menu_act" name="Questions" parent="bella_menu_root" action="bella_question_action" sequence="1"/>
     <menuitem id="bella_answer_menu_act" name="Answers" parent="bella_menu_root" action="bella_answer_action" sequence="2"/>

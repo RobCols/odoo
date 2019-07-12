@@ -2,3 +2,4 @@ id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
 access_bella_question,access_bella_question,model_bella_question,base.group_user,1,1,1,1
 access_bella_answer,access_bella_answer,model_bella_answer,base.group_user,1,1,1,1
 access_bella_action,access_bella_action,model_bella_action,base.group_user,1,1,1,1
+no_access_bella_config,no_access_bella_config,model_bella_question,flex_routes.group_carrier,0,0,0,0
