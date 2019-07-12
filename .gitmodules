@@ -10,7 +10,3 @@
 	path = rest-framework
 	url = https://github.com/OCA/rest-framework/
 	branch = 12.0
-[submodule "access-addons"]
-	path = access-addons
-	url = https://github.com/it-projects-llc/access-addons
-	branch = 12.0
