@@ -109,8 +109,8 @@ class RouteOptimization(models.Model):
             for route in response.get("routes"):
                 if not route.get("deliveryTasks", False):
                     continue
-                user_id = int(route["vehicleId"].split("_")[1])
-                vehicle_id = int(route["vehicleId"].split("_")[0])
+                user_id = 12  # waarom terug dummy-antwoorden?
+                vehicle_id = 2  # int(route["vehicleId"].split("_")[0]) - zie boven
                 created_route = RouteModel.create(
                     {"user_id": user_id, "date": self.date, "vehicle_id": vehicle_id}
                 )

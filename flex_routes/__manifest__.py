@@ -26,6 +26,7 @@
         "security/ir.model.access.csv",
         "views/sale_order_tree.xml",
         "views/sale_order_form.xml",
+        "views/product_template.xml",
     ],
     "installable": True,
     "auto_install": False,

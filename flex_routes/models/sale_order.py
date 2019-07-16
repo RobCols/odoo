@@ -29,6 +29,18 @@ class SaleOrder(models.Model):
         default="undelivered",
     )
 
+    total_crate_equivalence = fields.Float(compute="_compute_total_crate_equivalence")
+
+    @api.depends("order_line")
+    def _compute_total_crate_equivalence(self):
+        for record in self:
+            total_crate_equivalence = 0
+            for line in record.order_line:
+                total_crate_equivalence += (
+                    line.product_uom_qty * line.product_id.crate_equivalence
+                )
+            record.total_crate_equivalence = total_crate_equivalence
+
     flex_color = fields.Integer(compute="_compute_flex_color")
 
     @api.depends("delivery_state")
@@ -43,6 +55,7 @@ class SaleOrder(models.Model):
     def set_delivery_state_to_delivered(self):
         self.ensure_one()
         self.delivery_state = "delivered"
+        self.state = "sale"
 
     @api.multi
     def scan_pickups(self):
@@ -159,7 +172,7 @@ class SaleOrder(models.Model):
             "priority": 10,  # TODO
             "duedate": self.date_order.isoformat(),
             "name": self.name,
-            "dropSize": [1],
+            "dropSize": [self.total_crate_equivalence],
             "extraDropDuration": 60,  # TODO
             "fixedDropDurationInSeconds": 5,  # TODO
             "variableDropDurationInSeconds": 10,  # TODO

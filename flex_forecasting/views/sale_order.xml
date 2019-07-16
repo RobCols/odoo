@@ -1,0 +1,21 @@
+<odoo>
+    <!-- sale.order inherit form view -->
+    <record id="view_order_form" model="ir.ui.view">
+        <field name="name">sale.order.inherit.view.form</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form" />
+        <field name="arch" type="xml">
+            <notebook position="inside">
+                <page string="Forecasts">
+                    <field name="forecast_line_ids">
+                        <tree>
+                            <field name="product_id" />
+                            <field name="quantity" />
+                            <field name="proposed_forecast_date" />
+                        </tree>
+                    </field>
+                </page>
+            </notebook>
+        </field>
+    </record>
+</odoo>

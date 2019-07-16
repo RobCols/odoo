@@ -5,4 +5,5 @@ from . import (
     route_optimization_preparation,
     fleet_vehicle,
     res_partner,
+    product_template,
 )
