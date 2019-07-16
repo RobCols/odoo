@@ -185,7 +185,7 @@ class ForecastedOrderLine(models.Model):
                     "deliveryDate": record.order_id.date_order,
                 }
             )
-        r = requests.post(
+        r = requests.put(
             "https://api.litefleet.io/api/Orders/multiple", json=data, headers=headers
         )
         print(r.status_code)
