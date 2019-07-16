@@ -38,13 +38,13 @@ class EmptiesService(Component):
 
     def total(self, products):
         total = 0.0
-        for product in products:
-            p = self.env["product.template"].browse(product["productId"])
+        for param in products:
+            p = self.env["product.product"].sudo().browse(param["productId"]).product_tmpl_id
             if p and p.product_empty_ids:
                 for empty in p.product_empty_ids:
                     total += (
                         empty.product_id.lst_price
                         * empty.quantity
-                        * product["quantity"]
+                        * param["quantity"]
                     )
         return {"totalEmpties": total}
