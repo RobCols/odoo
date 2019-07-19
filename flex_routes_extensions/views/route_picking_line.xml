@@ -159,7 +159,7 @@
                             </tree>
                         </field>
                     </page>
-                    <page string="Picking">
+                    <page string="Picking" name="picking">
                         <field name="route_picking_ids">
                             <tree editable="bottom" decoration-success="state==True" decoration-danger="state==False">
                                 <field name="product_qty" readonly="1" />
@@ -170,7 +170,7 @@
                             </tree>
                         </field>
                     </page>
-                    <page string="Loading">
+                    <page string="Loading" name="loading">
                         <field name="route_loading_ids" widget="many2many">
                             <tree editable="bottom" default_order="route_sequence desc" decoration-success="state==True" decoration-danger="state==False">
                                 <field name="route_sequence" invisible="1" />

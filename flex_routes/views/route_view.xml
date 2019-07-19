@@ -40,6 +40,7 @@
                     <group>
                         <field name="user_id" />
                         <field name="date" readonly="1" />
+                        <field name="letter" />
                         <field name="vehicle_id" />
                         <field name="optimization_id" readonly="1"/>
                         <field name="sale_order_ids" widget="many2many" domain="[('route_id', '=', False)]" groups="flex_routes.group_manager">

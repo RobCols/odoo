@@ -1,0 +1,57 @@
+<odoo>
+    <data>
+        <report string="Picking Operations" id="action_report_picking" model="route.route" report_type="qweb-pdf" name="flex_reporting.picking_report" file="flex_reporting.route_picking_report" print_report_name="'Picking - %s' % (object.date)" paperformat="flex_reporting.paperformat_euro_lowmargin" />
+        <template id="picking_report">
+            <t t-call="web.html_container">
+                <t t-call="web.report_layout">
+                    <span style="font-size: 8px" class="pull-right">
+                        Printed on
+                        <t t-esc="datetime.datetime.now()" />
+                    </span>
+                    <!-- <table>
+                        <thead>
+                            <th></th>
+                            <t t-foreach="docs" t-as="o">
+                                <th>
+                                    <strong t-field="o.user_id.display_name" />
+                                </th>
+                            </t>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <strong>
+                                        Totaal aantal kratten:
+                                    </strong>
+                                </td>
+                            </tr>
+                            <tr></tr>
+                        </tbody>
+                    </table> -->
+                    <t t-set="product_lines" t-value="docs.get_picking_data_for_report()" />
+
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th t-foreach="product_lines['headers']" t-as="header">
+                                    <strong t-esc="header" />
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="product_lines['values']" t-as="product_line">
+                                <tr>
+                                    <t t-foreach="product_line" t-as="col">
+                                        <td>
+                                            <t t-esc="col" />
+                                        </td>
+                                    </t>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>
