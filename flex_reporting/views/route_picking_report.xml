@@ -2,8 +2,7 @@
     <data>
         <report string="Picking Operations" id="action_report_picking" model="route.route" report_type="qweb-pdf" name="flex_reporting.picking_report" file="flex_reporting.route_picking_report" print_report_name="'Picking - %s' % (object.date)" paperformat="flex_reporting.paperformat_euro_lowmargin" />
         <template id="picking_report">
-            <t t-call="web.html_container">
-                <t t-call="web.report_layout">
+                <t t-call="web.basic_layout">
                     <span style="font-size: 8px" class="pull-right">
                         Printed on
                         <t t-esc="datetime.datetime.now()" />
@@ -30,7 +29,7 @@
                     </table> -->
                     <t t-set="product_lines" t-value="docs.get_picking_data_for_report()" />
 
-                    <table class="table table-bordered">
+                    <table class="table table-bordered table-sm table-striped" style="padding: 0 0 0 0;border-color: black;border-size: 1px;">
                         <thead>
                             <tr>
                                 <th t-foreach="product_lines['headers']" t-as="header">
@@ -42,7 +41,7 @@
                             <t t-foreach="product_lines['values']" t-as="product_line">
                                 <tr>
                                     <t t-foreach="product_line" t-as="col">
-                                        <td>
+                                        <td style="line" nowrap="">
                                             <t t-esc="col" />
                                         </td>
                                     </t>
@@ -51,7 +50,6 @@
                         </tbody>
                     </table>
                 </t>
-            </t>
         </template>
     </data>
 </odoo>
