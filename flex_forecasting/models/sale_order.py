@@ -121,7 +121,7 @@ class SaleOrderLine(models.Model):
                         vals = {
                             "date_order": date,
                             "partner_id": record.order_id.partner_id.id,
-                            "state": "sent",
+                            "state": "draft",
                         }
                         order = SaleOrder.create(vals)
                     print(order)
@@ -140,7 +140,8 @@ class SaleOrderLine(models.Model):
                         "proposed_forecast_date": date,
                         "forecast_id": response["order"]["partnerId"],
                     }
-                    ForecastedOrderLine.create(vals)
+                    res = ForecastedOrderLine.create(vals)
+                    print(res)
 
 
 class ForecastedOrderLine(models.Model):
@@ -177,18 +178,19 @@ class ForecastedOrderLine(models.Model):
             data.append(
                 {
                     "partnerId": record.forecast_id,
-                    "customerPartnerId": record.order_id.partner_id,
+                    "customerPartnerId": record.order_id.partner_id.id,
                     "quantity": record.quantity,
                     "accepted": record.accepted,
                     "cancelled": record.cancelled,
-                    "proposedForecastDate": record.proposed_forecast_date,
-                    "deliveryDate": record.order_id.date_order,
+                    "proposedForecastDate": record.proposed_forecast_date.isoformat(),
+                    "deliveryDate": record.order_id.date_order.isoformat(),
                 }
             )
-        r = requests.put(
-            "https://api.litefleet.io/api/Orders/multiple", json=data, headers=headers
-        )
-        print(r.status_code)
+        if data:
+            r = requests.put(
+                "https://api.litefleet.io/api/Orders/multiple", json=data, headers=headers
+            )
+            print(r.status_code)
 
         return True
 
@@ -211,3 +213,23 @@ class SaleOrder(models.Model):
         )
         res = super().create(vals)
         return res
+
+    @api.model
+    def send_forecast_feedback(self): 
+        recs = self.filtered(lambda o: o.state == 'draft')
+        for record in recs: 
+            if record.modification_deadline and record.modification_deadline <= datetime.datetime.now():
+                matched_forecast_ids = []
+                for line in record.order_line: 
+                    for forecasted_line in record.forecast_line_ids: 
+                        if forecasted_line.product_id != line.product_id:
+                            continue
+                        forecasted_line.accepted = True
+                        forecasted_line.quantity = line.product_uom_qty
+                        matched_forecast_ids.append(forecasted_line.id)
+                for forecasted_line in record.forecast_line_ids.filtered(lambda i: i.id not in matched_forecast_ids):
+                    forecasted_line.cancelled = True
+                if record.forecast_line_ids:
+                    record.forecast_line_ids.send_to_movetex()
+                record.state = "sent"
+                

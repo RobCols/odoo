@@ -1,0 +1,12 @@
+<odoo>
+    <data>
+        <record model="account.journal" id="delivery_notes">
+            <field name="name">Delivery notes</field>
+            <field name="currency_id">1</field>
+            <field name="user_type_id">1</field>
+            <field name="code">abcdefgh</field>
+            <field name="reconcile">True</field>
+            <field name="type">sale</field>
+        </record>
+    </data>
+</odoo>
