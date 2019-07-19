@@ -11,4 +11,3 @@ class ResPartner(models.Model):
             ("b2b_delivery", "B2B Delivery"),
         ]
     )
-

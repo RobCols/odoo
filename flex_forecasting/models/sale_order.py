@@ -188,7 +188,9 @@ class ForecastedOrderLine(models.Model):
             )
         if data:
             r = requests.put(
-                "https://api.litefleet.io/api/Orders/multiple", json=data, headers=headers
+                "https://api.litefleet.io/api/Orders/multiple",
+                json=data,
+                headers=headers,
             )
             print(r.status_code)
 
@@ -215,21 +217,25 @@ class SaleOrder(models.Model):
         return res
 
     @api.model
-    def send_forecast_feedback(self): 
-        recs = self.filtered(lambda o: o.state == 'draft')
-        for record in recs: 
-            if record.modification_deadline and record.modification_deadline <= datetime.datetime.now():
+    def send_forecast_feedback(self):
+        recs = self.filtered(lambda o: o.state == "draft")
+        for record in recs:
+            if (
+                record.modification_deadline
+                and record.modification_deadline <= datetime.datetime.now()
+            ):
                 matched_forecast_ids = []
-                for line in record.order_line: 
-                    for forecasted_line in record.forecast_line_ids: 
+                for line in record.order_line:
+                    for forecasted_line in record.forecast_line_ids:
                         if forecasted_line.product_id != line.product_id:
                             continue
                         forecasted_line.accepted = True
                         forecasted_line.quantity = line.product_uom_qty
                         matched_forecast_ids.append(forecasted_line.id)
-                for forecasted_line in record.forecast_line_ids.filtered(lambda i: i.id not in matched_forecast_ids):
+                for forecasted_line in record.forecast_line_ids.filtered(
+                    lambda i: i.id not in matched_forecast_ids
+                ):
                     forecasted_line.cancelled = True
                 if record.forecast_line_ids:
                     record.forecast_line_ids.send_to_movetex()
                 record.state = "sent"
-                

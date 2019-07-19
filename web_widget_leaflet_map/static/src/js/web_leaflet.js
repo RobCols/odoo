@@ -32,8 +32,7 @@ odoo.define('web_widget_leaflet', function (require) {
         on_ready: function () {
             var lat = this.data[this.field_lat];
             var lng = this.data[this.field_lng];
-            var zoomLevel = this.data[this.field_zoom] || 13
-
+            var zoomLevel = this.data[this.field_zoom] || 20;
             var $leafletEl = this.$el[0];
 
             let map = new L.map($leafletEl).setView([lat, lng], zoomLevel);

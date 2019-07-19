@@ -10,7 +10,7 @@
             </button>
             <xpath expr="//page[@name='geo_location']" position="inside">
                 <group>
-                    <group col="1" string="Routing point">
+                    <group col="1" string="Routing point" name="routing_group">
                         <widget name="leaflet_marker" lat="partner_latitude" lng="partner_longitude" zoom_field="routing_zoomlevel" description="Routing Geo">
                             <field name="partner_latitude" />
                             <field name="partner_longitude" />
