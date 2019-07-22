@@ -1,0 +1,71 @@
+<odoo>
+    <!-- forecast.wizard action window -->
+    <record id="forecast_wizard_action" model="ir.actions.act_window">
+        <field name="name">Forecast reporting</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">forecast.wizard</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_type">form</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                <!-- Add Text Here -->
+            </p>
+            <p>
+                <!-- More details about what a user can do with this object will be OK -->
+            </p>
+        </field>
+    </record>
+    <!-- This Menu Item must have a parent and an action -->
+    <menuitem id="forecast_wizard_menu_act" name="Forecast reporting" parent="sale.sale_menu_root" action="forecast_wizard_action" sequence="999" />
+    
+    <record model="ir.ui.view" id="forecast_wizard">
+        <field name="model">forecast.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Forecast reporting">
+                <sheet>
+                    <group>
+                        <field name="start_date" />
+                        <field name="week_count" />
+                        <field name="supplier" />
+                    </group>
+                    <button string="Submit" type="object" name="generate_report" />
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <report string="Forecast" id="action_report_forecasting" model="sale.order.line" report_type="qweb-pdf" name="flex_reporting.forecasting_report" file="flex_reporting.route_picking_report" print_report_name="'Forecasting - %s' % (datetime.datetime.now().date().strftime('%d/%m/%Y'))" paperformat="flex_reporting.paperformat_euro_lowmargin" />
+    <template id="forecasting_report">
+        <t t-call="web.basic_layout">
+            <t t-set="forecast_lines" t-value="docs.get_weekly_data()" />
+            <table>
+                <thead>
+                    <th style="width: 33%">Flex-Delivery</th>
+                    <th style="width: 34%">
+                        Forecast voor
+                        <t t-esc="forecast_lines['supplier']" />
+                    </th>
+                    <th style="width: 33%">
+                        Printed on
+                        <t t-esc="datetime.datetime.now().strftime('%d/%m/%Y %h:%M')" />
+                    </th>
+                </thead>
+            </table>
+            <table class="table table-bordered table-sm table-striped" style="padding: 0 0 0 0;border-color: black;border-size: 1px;">
+                <thead>
+                    <th>Forecast Flex-Delivery</th>
+                    <th t-foreach="forecast_lines['headers']" t-as="header">
+                        W
+                        <t t-esc="header" />
+                    </th>
+                </thead>
+                <tbody>
+                    <tr t-foreach="forecast_lines['result']" t-as="result">
+                        <td t-foreach="result" t-as="col">
+                            <t t-esc="col" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </t>
+    </template>
+</odoo>

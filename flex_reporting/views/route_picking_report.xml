@@ -2,54 +2,68 @@
     <data>
         <report string="Picking Operations" id="action_report_picking" model="route.route" report_type="qweb-pdf" name="flex_reporting.picking_report" file="flex_reporting.route_picking_report" print_report_name="'Picking - %s' % (object.date)" paperformat="flex_reporting.paperformat_euro_lowmargin" />
         <template id="picking_report">
-                <t t-call="web.basic_layout">
-                    <span style="font-size: 8px" class="pull-right">
-                        Printed on
-                        <t t-esc="datetime.datetime.now()" />
-                    </span>
-                    <!-- <table>
-                        <thead>
-                            <th></th>
-                            <t t-foreach="docs" t-as="o">
-                                <th>
-                                    <strong t-field="o.user_id.display_name" />
-                                </th>
-                            </t>
-                        </thead>
-                        <tbody>
+            <t t-call="web.basic_layout">
+                <span style="font-size: 8px" class="pull-right">
+                    Printed on
+                    <t t-esc="datetime.datetime.now()" />
+                </span>
+                <t t-set="empty_lines" t-value="docs.get_empty_data_for_report()" />
+                <table class="table table-bordered table-sm table-striped" style="padding: 0 0 0 0;border-color: black;border-size: 1px;">
+                    <thead>
+                        <th>Totaal aantal kratten</th>
+                    </thead>
+                    <thead>
+                        <th></th>
+                        <t t-foreach="empty_lines['headers']" t-as="header">
+                            <th>
+                                <strong t-esc="header" />
+                            </th>
+                        </t>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="empty_lines['empties']" t-as="empty_line">
                             <tr>
-                                <td>
-                                    <strong>
-                                        Totaal aantal kratten:
-                                    </strong>
-                                </td>
+                                <t t-foreach="empty_line" t-as="col">
+                                    <td>
+                                        <strong t-esc="col" />
+                                    </td>
+                                </t>
                             </tr>
-                            <tr></tr>
-                        </tbody>
-                    </table> -->
-                    <t t-set="product_lines" t-value="docs.get_picking_data_for_report()" />
-
-                    <table class="table table-bordered table-sm table-striped" style="padding: 0 0 0 0;border-color: black;border-size: 1px;">
-                        <thead>
+                        </t>
+                        <tr>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Leverdag</td>
+                            <td>
+                                <t t-esc="docs[0].date.strftime('%d/%m/%Y')" />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <t t-set="product_lines" t-value="docs.get_picking_data_for_report()" />
+                
+                <table class="table table-bordered table-sm table-striped" style="padding: 0 0 0 0;border-color: black;border-size: 1px;">
+                    <thead>
+                        <tr>
+                            <th t-foreach="product_lines['headers']" t-as="header">
+                                <strong t-esc="header" />
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="product_lines['values']" t-as="product_line">
                             <tr>
-                                <th t-foreach="product_lines['headers']" t-as="header">
-                                    <strong t-esc="header" />
-                                </th>
+                                <t t-foreach="product_line" t-as="col">
+                                    <td style="line" nowrap="">
+                                        <t t-esc="col" />
+                                    </td>
+                                </t>
                             </tr>
-                        </thead>
-                        <tbody>
-                            <t t-foreach="product_lines['values']" t-as="product_line">
-                                <tr>
-                                    <t t-foreach="product_line" t-as="col">
-                                        <td style="line" nowrap="">
-                                            <t t-esc="col" />
-                                        </td>
-                                    </t>
-                                </tr>
-                            </t>
-                        </tbody>
-                    </table>
-                </t>
+                        </t>
+                    </tbody>
+                </table>
+            </t>
         </template>
     </data>
 </odoo>
