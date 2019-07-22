@@ -7,6 +7,8 @@
                 <link rel="stylesheet" href="/web_widget_leaflet_map/static/src/css/web_leaflet.css" />
                 <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js" integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og==" crossorigin=""></script>
                 <script type="text/javascript" src="/web_widget_leaflet_map/static/src/js/web_leaflet.js" />
+                <script type="text/javascript" src="/web_widget_leaflet_map/static/src/js/web_leaflet_multi.js" />
+
             </xpath>
         </template>
     </data>

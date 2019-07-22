@@ -1,3 +1,7 @@
 id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
-access_route_picking_line,access_route_picking_line,model_route_picking_line,base.group_user,1,1,1,1
-access_route_loading_line,access_route_loading_line,model_route_loading_line,base.group_user,1,1,1,1
+access_route_picking_line,access_route_picking_line,model_route_picking_line,flex_routes.group_manager,1,1,1,1
+access_route_loading_line,access_route_loading_line,model_route_loading_line,flex_routes.group_manager,1,1,1,1
+rw_route_picking_line,rw_route_picking_line,model_route_picking_line,flex_routes.group_carrier,1,1,0,0
+rw_route_loading_line,rw_route_loading_line,model_route_loading_line,flex_routes.group_carrier,1,1,0,0
+read_route_picking_line,read_route_picking_line,model_route_picking_line,base.group_user,1,1,0,0
+read_route_loading_line,read_route_loading_line,model_route_loading_line,base.group_user,1,1,0,0

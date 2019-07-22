@@ -3,7 +3,7 @@
     "version": "12.0.1.0.0",
     "author": "Abstractive BVBA",
     "website": "http://www.abstractive.be",
-    "depends": ["product", "sale", "website_sale"],
+    "depends": ["product", "sale", "website_sale", "base_rest"],
     "summary": "Product Empty",
     "data": [
         "data/ir_config_parameter_data.xml",

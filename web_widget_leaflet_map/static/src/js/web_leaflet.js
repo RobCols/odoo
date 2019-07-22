@@ -32,8 +32,7 @@ odoo.define('web_widget_leaflet', function (require) {
         on_ready: function () {
             var lat = this.data[this.field_lat];
             var lng = this.data[this.field_lng];
-            var zoomLevel = this.data[this.field_zoom] || 13
-
+            var zoomLevel = this.data[this.field_zoom] || 20;
             var $leafletEl = this.$el[0];
 
             let map = new L.map($leafletEl).setView([lat, lng], zoomLevel);
@@ -47,11 +46,16 @@ odoo.define('web_widget_leaflet', function (require) {
                 }).addTo(map);
                 L.tileLayer('http://tile.informatievlaanderen.be/ws/raadpleegdiensten/wmts?SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&LAYER=ogwrgb13_15vl&STYLE=&FORMAT=image/png&TILEMATRIXSET=GoogleMapsVL&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', {
                 }).addTo(map);
-
                 L.tileLayer.wms('https://geoservices.informatievlaanderen.be/raadpleegdiensten/Adressen/wms?', {
                     layers: 'Adrespos',
                     format: 'image/png',
-                    transparent: true, 
+                    transparent: true,
+                }).addTo(map);
+                L.tileLayer.wms('https://geoservices.informatievlaanderen.be/raadpleegdiensten/GRB/wms?',
+                {
+                    layers: 'GRB_SNM',
+                    format: 'image/png',
+                    transparent: true,
                 }).addTo(map);
             }
 

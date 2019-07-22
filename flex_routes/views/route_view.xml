@@ -35,21 +35,21 @@
         <field name="model">route.route</field>
         <field name="arch" type="xml">
             <form string="Route aanmaken">
-                <header>
-                    <button type="object" name="open_orders" string="Uitleveren" class="oe_stat_button" />
-                </header>
                 <sheet>
+                    <button type="object" name="open_orders" string="Uitleveren" class="btn btn-primary pull-right" />
                     <group>
                         <field name="user_id" />
-                        <field name="date" />
+                        <field name="date" readonly="1" />
+                        <field name="letter" />
                         <field name="vehicle_id" />
-                        <field name="optimization_id" />
+                        <field name="optimization_id" readonly="1"/>
                         <field name="sale_order_ids" widget="many2many" domain="[('route_id', '=', False)]" groups="flex_routes.group_manager">
                             <tree editable="bottom">
                                 <field name="route_sequence" widget="handle" />
                                 <field name="partner_id" />
                                 <field name="name" />
                                 <field name="state" invisible="1" />
+                                <field name="delivery_state" invisible="1" />
                             </tree>
                         </field>
                     </group>
@@ -67,8 +67,9 @@
         <field name="help" type="html">
             <p class="oe_view_nocontent_create">
                 <!-- Add Text Here -->
-            </p><p>
-                <!-- More details about what a user can do with this object will be OK --> 
+            </p>
+            <p>
+                <!-- More details about what a user can do with this object will be OK -->
             </p>
         </field>
     </record>

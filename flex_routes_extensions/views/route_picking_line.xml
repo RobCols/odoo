@@ -1,4 +1,145 @@
 <odoo>
+    <!-- route.picking.line kanban view -->
+    <record id="route_picking_view_kanban" model="ir.ui.view">
+        <field name="name">route.picking.line.view.kanban</field>
+        <field name="model">route.picking.line</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile" default_order="stock_location">
+                <field name="product_qty" />
+                <field name="product_id" />
+                <field name="stock_location" />
+                <field name="state" />
+                <field name="flex_color" />
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_card #{kanban_color(record.flex_color.raw_value)}">
+                            <div class="row">
+                                <strong>
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <th>Location</th>
+                                            <th>#</th>
+                                            <th>Product</th>
+                                            <th></th>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <t t-esc="record.stock_location.value" />
+                                                </td>
+                                                <td>
+                                                    <t t-esc="record.product_qty.value" />
+                                                </td>
+                                                <td>
+                                                    <t t-esc="record.product_id.value" />
+                                                </td>
+                                                <td>
+                                                    <t t-if="record.state.raw_value">
+                                                        <button class="btn btn-secondary" type="object" name="mark_as_picked">Not picked</button>
+                                                    </t>
+                                                    <t t-if="!record.state.raw_value">
+                                                        <button class="btn btn-primary" type="object" name="mark_as_picked">Picked</button>
+                                                    </t>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </strong>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+    <!-- route.loading.line kanban view -->
+    <record id="route_loading_line_view_kanban" model="ir.ui.view">
+        <field name="name">route.loading.line.view.kanban</field>
+        <field name="model">route.loading.line</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile" default_group_by="order_id" default_order="route_sequence desc">
+                <field name="route_sequence" invisible="1" />
+                <field name="order_id" />
+                <field name="product_uom_qty" />
+                <field name="product_id" />
+                <field name="state" />
+                <field name="flex_color" />
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_card #{kanban_color(record.flex_color.raw_value)}">
+                            <div class="row">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <th>Order</th>
+                                        <th>#</th>
+                                        <th>Product</th>
+                                        <th></th>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <t t-esc="record.order_id.value" />
+                                            </td>
+                                            <td>
+                                                <t t-esc="record.product_uom_qty.value" />
+                                            </td>
+                                            <td>
+                                                <t t-esc="record.product_id.value" />
+                                            </td>
+                                            <td>
+                                                <t t-if="record.state.raw_value">
+                                                    <button class="btn btn-secondary" type="object" name="mark_as_loaded">Not loaded</button>
+                                                </t>
+                                                <t t-if="!record.state.raw_value">
+                                                    <button class="btn btn-primary" type="object" name="mark_as_loaded">Loaded</button>
+                                                </t>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+    <!-- sale.order kanban view -->
+    <record id="route_sale_order_view_kanban" model="ir.ui.view">
+        <field name="name">sale.order.view.kanban</field>
+        <field name="model">sale.order</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile" default_order="route_sequence asc">
+                <field name="route_sequence" />
+                <field name="partner_id" />
+                <field name="name" />
+                <field name="state" />
+                <field name="flex_color" />
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_card #{kanban_color(record.flex_color.raw_value)}">
+                            <div class="row">
+                                <div class="col-8">
+                                    <strong>
+                                        <span>
+                                            <t t-esc="record.partner_id.value" />
+                                        </span>
+                                    </strong>
+                                </div>
+                                <div class="col-4">
+                                    <strong>
+                                        <span class="float-right text-right">
+                                            <t t-esc="record.name.value" />
+                                        </span>
+                                    </strong>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
     <!-- route.route inherit form view -->
     <record id="route_route_view_form" model="ir.ui.view">
         <field name="name">route.route.inherit.view.form</field>
@@ -9,33 +150,35 @@
             <xpath expr="sheet" position="inside">
                 <notebook>
                     <page string="Orders" groups="flex_routes.group_manager">
-                        <field name="sale_order_ids" widget="many2many" domain="[('route_id', '=', False)]" groups="flex_routes.group_manager">
+                        <field name="sale_order_ids" widget="many2many" domain="[('route_id', '=', False)]" groups="flex_routes.group_manager" context="{'kanban_view_ref': 'flex_routes_extensions.route_sale_order_view_kanban'}">
                             <tree editable="bottom">
                                 <field name="route_sequence" widget="handle" />
-                                <field name="partner_id" />
+                                <field name="partner_id" readonly="1" />
                                 <field name="name" />
                                 <field name="state" invisible="1" />
                             </tree>
                         </field>
                     </page>
-                    <page string="Picking">
+                    <page string="Picking" name="picking">
                         <field name="route_picking_ids">
                             <tree editable="bottom" decoration-success="state==True" decoration-danger="state==False">
-                                <field name="product_qty" />
-                                <field name="product_id" />
-                                <field name="stock_location" />
+                                <field name="product_qty" readonly="1" />
+                                <field name="product_id" readonly="1" />
+                                <field name="stock_location" readonly="1" />
                                 <field name="state" />
+                                <field name="flex_color" invisible="1" />
                             </tree>
                         </field>
                     </page>
-                    <page string="Loading">
+                    <page string="Loading" name="loading">
                         <field name="route_loading_ids" widget="many2many">
                             <tree editable="bottom" default_order="route_sequence desc" decoration-success="state==True" decoration-danger="state==False">
-                                <field name="route_sequence" invisible="1"/>
-                                <field name="order_id" />
-                                <field name="product_uom_qty" />
-                                <field name="product_id" />
+                                <field name="route_sequence" invisible="1" />
+                                <field name="order_id" readonly="1" />
+                                <field name="product_uom_qty" readonly="1" />
+                                <field name="product_id" readonly="1" />
                                 <field name="state" />
+                                <field name="flex_color" invisible="1" />
                             </tree>
                         </field>
                     </page>

@@ -10,6 +10,7 @@ class RouteRoute(models.Model):
     vehicle_id = fields.Many2one("fleet.vehicle", "Voertuig")
     sale_order_ids = fields.One2many("sale.order", "route_id", "Order")
     optimization_id = fields.Many2one("route.optimization", "Optimalizatie")
+    letter = fields.Char()
 
     @api.multi
     @api.depends("date", "user_id", "user_id.display_name")

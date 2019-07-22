@@ -1,0 +1,20 @@
+<odoo>
+    <!-- route.route inherit form view -->
+    <record id="route_route_view_form" model="ir.ui.view">
+        <field name="name">route.route.inherit.view.form</field>
+        <field name="model">route.route</field>
+        <field name="inherit_id" ref="flex_routes.route_route_view_form" />
+        <field name="arch" type="xml">
+            <xpath expr="sheet" position="inside">
+                <group col="1" string="Routing point">
+                    <widget name="leaflet_marker_multi" source_ids="sale_order_ids" lat="depot_latitude" lng="depot_longitude" zoom_field="routing_zoomlevel" description="Routing Geo">
+                        <field name="depot_latitude" />
+                        <field name="depot_longitude" />
+                        <field name="routing_zoomlevel" />
+                    </widget>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>
+<!-- help -->
