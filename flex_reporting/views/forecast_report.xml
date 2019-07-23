@@ -4,8 +4,9 @@
         <field name="name">Forecast reporting</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">forecast.wizard</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">form</field>
         <field name="view_type">form</field>
+        <field name="target">new</field>
         <field name="help" type="html">
             <p class="oe_view_nocontent_create">
                 <!-- Add Text Here -->
@@ -22,6 +23,11 @@
         <field name="model">forecast.wizard</field>
         <field name="arch" type="xml">
             <form string="Forecast reporting">
+                <script>
+                    $(document).ready(function(){
+                        $(".modal-footer").hide();
+                    });
+                </script>
                 <sheet>
                     <group>
                         <field name="start_date" />
