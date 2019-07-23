@@ -7,39 +7,43 @@ class SaleOrderLine(models.Model):
 
     date_order = fields.Datetime(related="order_id.date_order", store=True)
 
-    def open_report(self, supplier):
-        datas = {
+    def open_report(self, supplier_name, is_weekly=False):
+        data = {
             "ids": self.ids,
-            "model": "sale.order.line",
-            "form": {"supplier": supplier},
-            "docs": self,
+            "model": self._name,
+            "form": {"supplier_name": supplier_name, "is_weekly": is_weekly},
         }
-        return self.env.ref("flex_reporting.action_report_forecasting").report_action(
-            self  # , data=datas
-        )
 
-    def get_weekly_data(self):
-        start_date = False
-        end_date = False
+        if is_weekly:
+            return self.env.ref(
+                "flex_reporting.action_report_forecasting_weekly"
+            ).report_action(self, data)
+        return self.env.ref(
+            "flex_reporting.action_report_forecasting_daily"
+        ).report_action(self, data)
+
+    def get_daily_data(self):
+        headers = []
+        self.sorted(lambda i: i.date_order)
         for record in self:
-            if not start_date:
-                start_date = record.date_order.date()
-            elif record.date_order.date() < start_date:
-                start_date = record.date_order.date()
-            if not end_date:
-                end_date = record.date_order.date()
-            elif record.date_order.date() > end_date:
-                end_date = record.date_order.date()
+            headers.append(record.date_order.date().strftime("%d/%m/%Y"))
+        headers = list(set(headers))
+        headers.sort()
+        result = self.parse_report_data(headers)
+        result = result["result"]
+        result = {"headers": headers, "result": result}
+        return result
 
-        headers = find_weeks(start_date, end_date)
+    def parse_report_data(self, headers, is_weekly=False):
         result = {}
-        supplier_names = []
         for record in self:
             if not record.product_id.is_empty:
-                for supplier in record.product_id.seller_ids:
-                    supplier_names.append(supplier.name.display_name)
-                week = record.date_order.isocalendar()[1]
-                index = headers.index(week) + 1
+                if is_weekly:
+                    index = headers.index("W" + record.date_order.isocalendar()[1]) + 1
+                else:
+                    index = (
+                        headers.index(record.date_order.date().strftime("%d/%m/%Y")) + 1
+                    )
                 if (
                     result.get(record.product_id.id)
                     and len(result.get(record.product_id.id)) >= index + 1
@@ -61,17 +65,36 @@ class SaleOrderLine(models.Model):
         for res in result:
             while len(res) < len(headers) + 1:
                 res.append("")
+
         result.sort(key=lambda i: i[0])
-        result = {
-            "headers": headers,
-            "result": result,
-            "supplier": max(set(supplier_names), key=supplier_names.count),
-        }
+
+        return {"result": result}
+
+    def get_weekly_data(self):
+        start_date = False
+        end_date = False
+        for record in self:
+            if not start_date:
+                start_date = record.date_order.date()
+            elif record.date_order.date() < start_date:
+                start_date = record.date_order.date()
+            if not end_date:
+                end_date = record.date_order.date()
+            elif record.date_order.date() > end_date:
+                end_date = record.date_order.date()
+
+        headers = find_weeks(start_date, end_date)
+        result = self.parse_report_data(headers, True)
+        result = result["result"]
+        for res in result:
+            while len(res) < len(headers) + 1:
+                res.append("")
+        result = {"headers": headers, "result": result}
         return result
 
 
-class ForecastReportWizard(models.TransientModel):
-    _name = "forecast.wizard"
+class ForecastReportWeeklyWizard(models.TransientModel):
+    _name = "forecast.wizard.weekly"
 
     start_date = fields.Date("Start date")
     week_count = fields.Integer("Number of weeks")
@@ -93,6 +116,64 @@ class ForecastReportWizard(models.TransientModel):
                 )
             )
         )
+        return order_lines.open_report(self.supplier.display_name, True)
+
+
+class ReportForecasting(models.AbstractModel):
+    """Abstract Model for report template.
+    for `_name` model, please use `report.` as prefix then add `module_name.report_name`.
+    """
+
+    _name = "report.flex_reporting.forecasting_report"
+
+    @api.model
+    def _get_report_values(self, docids, data=None):
+        docs = self.env["sale.order.line"].search([("id", "in", data["ids"])])
+
+        if data["form"].get("is_weekly", False):
+            report_lines = docs.get_weekly_data()
+            report_headers = report_lines["headers"]
+            report_lines = report_lines["result"]
+        else:
+            report_lines = docs.get_daily_data()
+            report_headers = report_lines["headers"]
+            report_lines = report_lines["result"]
+        return {
+            "doc_ids": docs.ids,
+            "doc_model": data["model"],
+            "supplier_name": data["form"]["supplier_name"],
+            "docs": docs,
+            "report_headers": report_headers,
+            "report_lines": report_lines,
+        }
+
+
+class ForecastReportDailyWizard(models.TransientModel):
+    _name = "forecast.wizard.daily"
+
+    start_date = fields.Date()
+    end_date = fields.Date()
+    supplier = fields.Many2one("res.partner", domain=[("supplier", "=", True)])
+
+    def generate_report(self):
+        sale_orders = self.env["sale.order"].search(
+            [
+                "&",
+                ("date_order", ">=", self.start_date),
+                ("date_order", "<=", self.end_date),
+            ]
+        )
+
+        order_lines = self.env["sale.order.line"].search(
+            [("order_id", "in", sale_orders.ids)]
+        )
+        order_lines = order_lines.filtered(
+            lambda ol: any(
+                ol.product_id.seller_ids.filtered(
+                    lambda s: s.name.id == self.supplier.id
+                )
+            )
+        )
         return order_lines.open_report(self.supplier.display_name)
 
 
@@ -101,5 +182,5 @@ def find_weeks(start, end):
     date_range = range((end - start).days + 1)
     for i in date_range:
         d = (start + datetime.timedelta(days=i)).isocalendar()
-        l.append(d[1])
+        l.append("W" + d[1])
     return sorted(set(l))
