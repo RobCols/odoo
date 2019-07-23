@@ -50,11 +50,17 @@ class SaleOrder(models.Model):
                             "values": [
                                 record.partner_id.display_name
                                 + " Tel: "
-                                + record.partner_shipping_id.mobile
-                                if record.partner_shipping_id.mobile
-                                else "" + " of " + record.partner_shipping_id.phone
-                                if record.partner_shipping_id.phone
-                                else "",
+                                + (
+                                    record.partner_shipping_id.mobile
+                                    if record.partner_shipping_id.mobile
+                                    else ""
+                                )
+                                + " of "
+                                + (
+                                    record.partner_shipping_id.phone
+                                    if record.partner_shipping_id.phone
+                                    else ""
+                                ),
                                 total_qty,
                                 total_price,
                             ],
@@ -64,7 +70,13 @@ class SaleOrder(models.Model):
                     for ol in order_lines:
                         if not ol.product_id.is_empty:
                             result[record.date_order].append(
-                                {"values": [ol.name, ol.product_uom_qty, ol.price_total]}
+                                {
+                                    "values": [
+                                        ol.name,
+                                        ol.product_uom_qty,
+                                        ol.price_total,
+                                    ]
+                                }
                             )
                     result[record.date_order][0]["values"][quantity_index] += total_qty
                     result[record.date_order][0]["values"][price_index] += total_price
@@ -94,11 +106,17 @@ class SaleOrder(models.Model):
                             "values": [
                                 record.partner_id.display_name
                                 + " Tel: "
-                                + record.partner_shipping_id.mobile
-                                if record.partner_shipping_id.mobile
-                                else "" + " of " + record.partner_shipping_id.phone
-                                if record.partner_shipping_id.phone
-                                else "",
+                                + (
+                                    record.partner_shipping_id.mobile
+                                    if record.partner_shipping_id.mobile
+                                    else ""
+                                )
+                                + " of "
+                                + (
+                                    record.partner_shipping_id.phone
+                                    if record.partner_shipping_id.phone
+                                    else ""
+                                ),
                                 total_qty,
                                 total_price,
                             ],
@@ -108,9 +126,17 @@ class SaleOrder(models.Model):
                     for ol in order_lines:
                         if not ol.product_id.is_empty:
                             result[record.date_order].append(
-                                {"values": [ol.name, ol.product_uom_qty, ol.price_total]}
+                                {
+                                    "values": [
+                                        ol.name,
+                                        ol.product_uom_qty,
+                                        ol.price_total,
+                                    ]
+                                }
                             )
-        result = list(result.values())
+        result = result.values()
+        result = list(result)
+        result.sort(key=lambda i: i[0]["values"][0])
         return result
 
 
