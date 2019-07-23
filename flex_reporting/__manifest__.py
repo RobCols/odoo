@@ -13,6 +13,7 @@
         "views/route_picking_report.xml",
         "views/route_picking.xml",
         "views/forecast_report.xml",
+        "views/order_report.xml",
     ],
     "installable": True,
     "auto_install": False,

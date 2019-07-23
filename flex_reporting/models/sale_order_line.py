@@ -1,5 +1,6 @@
-from odoo import api, fields, models
+from odoo import api, fields, models, _
 import datetime
+from odoo.exceptions import UserError
 
 
 class SaleOrderLine(models.Model):
@@ -31,6 +32,17 @@ class SaleOrderLine(models.Model):
         headers.sort()
         result = self.parse_report_data(headers)
         result = result["result"]
+        grand_total = ["Grand Total"]
+        for res in result:
+            i = 1
+            while i < len(headers) + 1:
+                if res[i]:
+                    if grand_total[i]:
+                        grand_total[i] += res[i]
+                    else:
+                        grand_total.append(res[i])
+                i += 1
+        result.append(grand_total)
         result = {"headers": headers, "result": result}
         return result
 
@@ -101,6 +113,10 @@ class ForecastReportWeeklyWizard(models.TransientModel):
     supplier = fields.Many2one("res.partner", domain=[("supplier", "=", True)])
 
     def generate_report(self):
+        if week_count < 0:
+            raise UserError(_("Week count must be a positive number."))
+        if not self.supplier:
+            raise UserError(_("Supplier can't be empty."))
         end_date = self.start_date + datetime.timedelta(weeks=self.week_count)
         sale_orders = self.env["sale.order"].search(
             ["&", ("date_order", ">=", self.start_date), ("date_order", "<=", end_date)]
@@ -156,6 +172,11 @@ class ForecastReportDailyWizard(models.TransientModel):
     supplier = fields.Many2one("res.partner", domain=[("supplier", "=", True)])
 
     def generate_report(self):
+        if self.end_date < self.start_date:
+            raise UserError(_("End date must be after start date"))
+        if not self.supplier:
+            raise UserError(_("Supplier can't be empty"))
+
         sale_orders = self.env["sale.order"].search(
             [
                 "&",

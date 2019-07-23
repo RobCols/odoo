@@ -1,0 +1,86 @@
+<odoo>
+    <record id="order_wizard_action" model="ir.actions.act_window">
+        <field name="name">Order reporting</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">report.wizard.order</field>
+        <field name="view_mode">form</field>
+        <field name="view_type">form</field>
+        <field name="target">new</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                <!-- Add Text Here -->
+            </p>
+            <p>
+                <!-- More details about what a user can do with this object will be OK -->
+            </p>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="order_report_wizard">
+        <field name="model">report.wizard.order</field>
+        <field name="arch" type="xml">
+            <form string="Orders report">
+                <script>
+                    $(document).ready(function(){
+                        $(".modal-footer").hide();
+                    });
+                </script>
+                <sheet>
+                    <group>
+                        <field name="start_date" />
+                        <field name="end_date" />
+                        <field name="supplier" />
+                    </group>
+                    <button string="Submit" type="object" name="generate_report" />
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <report string="Orders" id="action_report_orders" model="sale.order" report_type="qweb-pdf" name="flex_reporting.order_report" file="flex_reporting.order_report" print_report_name="'Orders'" paperformat="flex_reporting.paperformat_euro_lowmargin" />
+    <menuitem id="order_report_wizard_menu_act" name="Order reports" parent="sale.sale_menu_root" action="flex_reporting.order_wizard_action" sequence="998" />
+    
+    <template id="order_report">
+        <t t-call="web.basic_layout">
+            <table class="table">
+                <thead>
+                    <th style="width: 33%">Flex-Delivery</th>
+                    <th style="width: 30%">
+                        Dagoverzicht voor
+                        <t t-esc="supplier_name" />
+                    </th>
+                    <th style="width: 37%">
+                        Printed on
+                        <t t-esc="datetime.datetime.now().strftime('%d/%m/%Y %H:%M')" />
+                    </th>
+                </thead>
+            </table>
+            <table class="table table-bordered table-sm" style="padding: 0 0 0 0;border-color: black;border-size: 1px;">
+                <thead>
+                    <th></th>
+                    <th>
+                        Hoeveelheid
+                    </th>
+                    <th>
+                        Totaalprijs FD website
+                    </th>
+                </thead>
+                <tbody>
+                    <t t-foreach="report_lines" t-as="report_line">
+                        <tr t-foreach="report_line" t-as="line">
+                            <t t-if="line.get('style', False)">
+                                <td t-foreach="line['values']" t-as="col" t-att-style="line['style']">
+                                    <t t-esc="col" />
+                                </td>
+                            </t>
+                            <t t-if="not line.get('style', False)">
+                                <td t-foreach="line['values']" t-as="col">
+                                    <t t-esc="col" />
+                                </td>
+                            </t>
+                        </tr>
+                    </t>
+                </tbody>
+            </table>
+        </t>
+    </template>
+    
+</odoo>
