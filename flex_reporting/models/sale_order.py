@@ -34,8 +34,9 @@ class SaleOrder(models.Model):
                 total_qty = 0
                 total_price = 0
                 for ol in order_lines:
-                    total_qty += ol.product_uom_qty
-                    total_price += ol.price_total
+                    if not ol.product_id.is_empty:
+                        total_qty += ol.product_uom_qty
+                        total_price += ol.price_total
                 total_price = round(total_price, 2)
                 if result.get(record.date_order, False):
                     result[record.date_order].append(
@@ -61,9 +62,10 @@ class SaleOrder(models.Model):
                         }
                     )
                     for ol in order_lines:
-                        result[record.date_order].append(
-                            {"values": [ol.name, ol.product_uom_qty, ol.price_total]}
-                        )
+                        if not ol.product_id.is_empty:
+                            result[record.date_order].append(
+                                {"values": [ol.name, ol.product_uom_qty, ol.price_total]}
+                            )
                     result[record.date_order][0]["values"][quantity_index] += total_qty
                     result[record.date_order][0]["values"][price_index] += total_price
                     result[record.date_order][0]["values"][price_index] = round(
@@ -104,9 +106,10 @@ class SaleOrder(models.Model):
                         }
                     )
                     for ol in order_lines:
-                        result[record.date_order].append(
-                            {"values": [ol.name, ol.product_uom_qty, ol.price_total]}
-                        )
+                        if not ol.product_id.is_empty:
+                            result[record.date_order].append(
+                                {"values": [ol.name, ol.product_uom_qty, ol.price_total]}
+                            )
         result = list(result.values())
         return result
 
