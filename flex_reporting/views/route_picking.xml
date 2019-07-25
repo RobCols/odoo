@@ -1,13 +1,13 @@
 <odoo>
     <!-- route.route inherit form view -->
-    <record id="route_route_view_form" model="ir.ui.view">
+    <record id="route_optimization_view_form" model="ir.ui.view">
         <field name="name">route.route.inherit.view.form</field>
-        <field name="model">route.route</field>
-        <field name="inherit_id" ref="flex_routes.route_route_view_form"/>
+        <field name="model">route.optimization</field>
+        <field name="inherit_id" ref="flex_routes.route_optimization_view_form" />
         <field name="arch" type="xml">
-            <page name="picking" position="inside">
-                <button type="object" name="print_picking" string="Print" />
-            </page>
+            <field name="route_ids" position="after">
+                <button type="object" class="btn btn-primary" name="print_picking" string="Picking" />
+            </field>
         </field>
     </record>
 </odoo>

@@ -1,0 +1,117 @@
+<odoo>
+    <!-- forecast.wizard action window -->
+    <record id="forecast_wizard_weekly_action" model="ir.actions.act_window">
+        <field name="name">Forecast reporting (weekly)</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">forecast.wizard.weekly</field>
+        <field name="view_mode">form</field>
+        <field name="view_type">form</field>
+        <field name="target">new</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                <!-- Add Text Here -->
+            </p>
+            <p>
+                <!-- More details about what a user can do with this object will be OK -->
+            </p>
+        </field>
+    </record>
+    
+    <record id="forecast_wizard_daily_action" model="ir.actions.act_window">
+        <field name="name">Forecast reporting (daily)</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">forecast.wizard.daily</field>
+        <field name="view_mode">form</field>
+        <field name="view_type">form</field>
+        <field name="target">new</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                <!-- Add Text Here -->
+            </p>
+            <p>
+                <!-- More details about what a user can do with this object will be OK -->
+            </p>
+        </field>
+    </record>
+    
+    <menuitem id="forecast_wizard_menu" name="Forecast reporting" parent="sale.sale_menu_root" sequence="999" />
+    <menuitem id="weekly_forecast_wizard_menu_act" name="Weekly forecast" parent="flex_reporting.forecast_wizard_menu" action="flex_reporting.forecast_wizard_weekly_action" sequence="1" />
+    <menuitem id="daily_forecast_wizard_menu_act" name="Daily forecast" parent="flex_reporting.forecast_wizard_menu" action="flex_reporting.forecast_wizard_daily_action" sequence="2" />
+    
+    <record model="ir.ui.view" id="forecast_wizard">
+        <field name="model">forecast.wizard.daily</field>
+        <field name="arch" type="xml">
+            <form string="Forecast daily reporting">
+                <script>
+                    $(document).ready(function(){
+                        $(".modal-footer").hide();
+                    });
+                </script>
+                <sheet>
+                    <group>
+                        <field name="start_date" />
+                        <field name="end_date" />
+                        <field name="supplier" />
+                    </group>
+                    <button string="Submit" type="object" name="generate_report" />
+                </sheet>
+            </form>
+        </field>
+    </record>
+    
+    
+    <record model="ir.ui.view" id="forecast_weekly_wizard">
+        <field name="model">forecast.wizard.weekly</field>
+        <field name="arch" type="xml">
+            <form string="Forecast weekly reporting">
+                <script>
+                    $(document).ready(function(){
+                        $(".modal-footer").hide();
+                    });
+                </script>
+                <sheet>
+                    <group>
+                        <field name="start_date" />
+                        <field name="week_count" />
+                        <field name="supplier" />
+                    </group>
+                    <button string="Submit" type="object" name="generate_report" />
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <report string="Forecast" id="action_report_forecasting_weekly" model="sale.order.line" report_type="qweb-pdf" name="flex_reporting.forecasting_report" file="flex_reporting.route_picking_report" print_report_name="'Forecasting - %s' % (datetime.datetime.now().date().strftime('%d/%m/%Y'))" paperformat="flex_reporting.paperformat_euro_lowmargin" />
+    <report string="Forecast" id="action_report_forecasting_daily" model="sale.order.line" report_type="qweb-pdf" name="flex_reporting.forecasting_report" file="flex_reporting.route_picking_report" print_report_name="'Forecasting - %s' % (datetime.datetime.now().date().strftime('%d/%m/%Y'))" paperformat="flex_reporting.paperformat_euro_lowmargin" />
+    <template id="forecasting_report">
+        <t t-call="web.basic_layout">
+            <table class="table">
+                <thead>
+                    <th style="width: 33%">Flex-Delivery</th>
+                    <th style="width: 30%">
+                        Forecast voor
+                        <t t-esc="supplier_name" />
+                    </th>
+                    <th style="width: 37%">
+                        Printed on
+                        <t t-esc="datetime.datetime.now().strftime('%d/%m/%Y %H:%M')" />
+                    </th>
+                </thead>
+            </table>
+            <table class="table table-bordered table-sm table-striped" style="padding: 0 0 0 0;border-color: black;border-size: 1px;">
+                <thead>
+                    <th>Forecast Flex-Delivery</th>
+                    <th t-foreach="report_headers" t-as="header">
+                        <t t-esc="header" />
+                    </th>
+                </thead>
+                <tbody>
+                    <tr t-foreach="report_lines" t-as="report_line">
+                        <td t-foreach="report_line" t-as="col">
+                            <t t-esc="col" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </t>
+    </template>    
+</odoo>
