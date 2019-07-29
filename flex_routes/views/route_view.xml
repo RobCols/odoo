@@ -42,10 +42,10 @@
                         <field name="date" readonly="1" />
                         <field name="letter" />
                         <field name="vehicle_id" />
-                        <field name="optimization_id" readonly="1"/>
+                        <field name="optimization_id" readonly="1" />
                         <field name="sale_order_ids" widget="many2many" domain="[('route_id', '=', False)]" groups="flex_routes.group_manager">
                             <tree editable="bottom">
-                                <field name="route_sequence" widget="handle" />
+                                <field name="route_sequence" widget="handle" string="#" />
                                 <field name="partner_id" />
                                 <field name="name" />
                                 <field name="state" invisible="1" />

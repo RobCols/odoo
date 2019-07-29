@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="assets_backend" name="flex_routes_backend" inherit_id="web.assets_backend">
+            <xpath expr="." position="inside">
+                <script type="text/javascript" src="/flex_routes/static/src/js/hide_selector_column_on_route_tree.js"></script>
+            </xpath>
+        </template>
+    </data>
+</odoo>
