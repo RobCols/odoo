@@ -27,6 +27,7 @@
         "views/sale_order_tree.xml",
         "views/sale_order_form.xml",
         "views/product_template.xml",
+        "views/web_asset.xml",
     ],
     "installable": True,
     "auto_install": False,

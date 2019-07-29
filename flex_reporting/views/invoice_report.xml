@@ -1,0 +1,89 @@
+<odoo>
+    <report string="Invoices" id="action_report_invoices" model="account.invoice" report_type="qweb-pdf" name="flex_reporting.forecasting_report" file="flex_reporting.route_picking_report" print_report_name="'Factuur" paperformat="flex_reporting.paperformat_euro_lowmargin" />
+    
+    <template id="invoice_report">
+        <t t-call="web.basic_layout">
+            <div class="page">
+                <h2>
+                    <span t-if="o.type == 'out_invoice' and o.state in ('open', 'in_payment', 'paid')">Invoice</span>
+                    <span t-if="o.type == 'out_invoice' and o.state == 'draft'">Draft Invoice</span>
+                    <span t-if="o.type == 'out_invoice' and o.state == 'cancel'">Cancelled Invoice</span>
+                    <span t-if="o.type == 'out_refund'">Credit Note</span>
+                    <span t-if="o.type == 'in_refund'">Vendor Credit Note</span>
+                    <span t-if="o.type == 'in_invoice'">Vendor Bill</span>
+                    <span t-field="o.number" />
+                </h2>
+            </div>
+            <div id="informations" class="row mt32 mb32">
+                <t t-set="company_address">
+                    <address t-field="o.company_address_id" t-options="{'widget': 'contact', 'fields': ['name', 'address' ], 'no_marker': True}" />
+                </t>
+                <t t-set="address">
+                    <address t-field="o.partner_id" t-options="{'widget': 'contact', 'fields': ['name', 'address'], 'no_marker': True}" />
+                    <div t-if="o.partner_id.vat" class="mt16"><t t-esc="o.company_id.country_id.vat_label or 'Tax ID'"/>: <span t-field="o.partner_id.vat"/></div>
+                </t>
+            </div>
+            <table class="table table-bordered table-sm table-striped" style="padding: 0 0 0 0;border-color: black;border-size: 1px;">
+                <thead>
+                    <th>
+                        Omschrijving
+                    </th>
+                    <th>
+                        Leeggoed (0% BTW)
+                    </th>
+                    <th>
+                        Producten (incl. BTW)
+                    </th>
+                    <th>
+                        Producten (excl. BTW)
+                    </th>
+                    <th>
+                        6% BTW
+                    </th>
+                    <th>
+                        21% BTW
+                    </th>
+                    <th>
+                        Totaal (incl. BTW)
+                    </th>
+                </thead>
+                <tbody>
+                    <tr t-foreach="report_lines" t-as="report_line">
+                        <td t-foreach="report_line" t-as="col">
+                            <t t-esc="col" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <!-- <table class="table">
+                <thead>
+                    <th style="width: 33%">Flex-Delivery</th>
+                    <th style="width: 30%">
+                        Forecast voor
+                        <t t-esc="supplier_name" />
+                    </th>
+                    <th style="width: 37%">
+                        Printed on
+                        <t t-esc="datetime.datetime.now().strftime('%d/%m/%Y %H:%M')" />
+                    </th>
+                </thead>
+            </table>
+            <table class="table table-bordered table-sm table-striped" style="padding: 0 0 0 0;border-color: black;border-size: 1px;">
+                <thead>
+                    <th>Forecast Flex-Delivery</th>
+                    <th t-foreach="report_headers" t-as="header">
+                        <t t-esc="header" />
+                    </th>
+                </thead>
+                <tbody>
+                    <tr t-foreach="report_lines" t-as="report_line">
+                        <td t-foreach="report_line" t-as="col">
+                            <t t-esc="col" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table> -->
+        </t>
+    </template>
+
+</odoo>
