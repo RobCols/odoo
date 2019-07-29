@@ -18,12 +18,8 @@ class ResPartner(models.Model):
     )
 
     dropoff_zoomlevel = fields.Integer(default=20)
-    dropoff_latitude = fields.Float(
-        string="Geo Latitude", digits=(16, 5), compute="_compute_dropoff"
-    )
-    dropoff_longitude = fields.Float(
-        string="Geo Longitude", digits=(16, 5), compute="_compute_dropoff"
-    )
+    dropoff_latitude = fields.Float(string="Geo Latitude", digits=(16, 5))
+    dropoff_longitude = fields.Float(string="Geo Longitude", digits=(16, 5))
 
     @api.multi
     def button_set_dropoff_to_routing(self):
@@ -31,11 +27,15 @@ class ResPartner(models.Model):
             record.dropoff_latitude = record.partner_latitude
             record.dropoff_longitude = record.partner_longitude
 
-    @api.depends("partner_latitude", "partner_longitude")
-    def _compute_dropoff(self):
-        for record in self:
-            if record.partner_latitude and record.partner_longitude:
-                if record.dropoff_latitude and record.dropoff_longitude:
-                    continue
-                record.dropoff_latitude = record.partner_latitude
-                record.dropoff_longitude = record.partner_longitude
+    @api.multi
+    def write(self, values):
+        if "partner_latitude" in values or "partner_longitude" in values:
+            for record in self:
+                if record.dropoff_latitude == record.dropoff_longitude == 0:
+                    record.write(
+                        {
+                            "dropoff_latitude": values.get("partner_latitude", False),
+                            "dropoff_longitude": values.get("partner_longitude"),
+                        }
+                    )
+        super.write(values)
