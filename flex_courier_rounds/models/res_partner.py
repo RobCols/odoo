@@ -38,4 +38,4 @@ class ResPartner(models.Model):
                             "dropoff_longitude": values.get("partner_longitude"),
                         }
                     )
-        super.write(values)
+        super().write(values)
