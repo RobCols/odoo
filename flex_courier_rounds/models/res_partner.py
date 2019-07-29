@@ -29,7 +29,9 @@ class ResPartner(models.Model):
 
     @api.multi
     def write(self, values):
-        if "partner_latitude" in values or "partner_longitude" in values:
+        if ("partner_latitude" in values or "partner_longitude" in values) and not (
+            "dropoff_latitude" in values or "dropoff_longitude" in values
+        ):
             for record in self:
                 if record.dropoff_latitude == record.dropoff_longitude == 0:
                     record.write(
