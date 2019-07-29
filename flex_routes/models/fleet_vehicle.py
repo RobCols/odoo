@@ -4,8 +4,8 @@ from odoo import api, fields, models
 class FleetVehicle(models.Model):
     _inherit = "fleet.vehicle"
 
-    vehicle_name = fields.Char("Voertuignaam")
-    vehicle_type_id = fields.Char("Voertuig type-id")
+    vehicle_name = fields.Char()
+    vehicle_type_id = fields.Char()
     start_location_partner_id = fields.Many2one("res.partner", "Startlocatie")
     start_location_lat = fields.Float(
         related="start_location_partner_id.partner_latitude"
@@ -23,38 +23,30 @@ class FleetVehicle(models.Model):
 
     depot_id = fields.Many2one("res.partner", "Depot")
 
-    min_usage_time = fields.Float("Minimum gebruiksduur")
-    max_usage_time = fields.Float("Maximum gebruiksduur")
-    usage_window_start = fields.Integer("Start gebruiksvenster")
-    usage_window_stop = fields.Integer("Stop gebruiksvenster")
-    range_in_meter = fields.Integer("Afstand in meter")
-    abs_range_in_meter = fields.Integer("Totale afstand in meter")
-    range_in_meter_violation_weight = fields.Float(
-        "Afstand in meter overtreding weight"
-    )
-    min_drops = fields.Integer("Minimum # leveringen")
-    drop_weight = fields.Integer("Drop weight")
-    distance_weight = fields.Float("Distance weight")
-    usage_time_weight = fields.Float("Gebruiksduur weight")
-    max_usage_time_violation_weight = fields.Float(
-        "Max gebruiksduur overtreding weight"
-    )
-    usage_weight = fields.Integer("Gebruik weight")
-    min_drops_violation_weight = fields.Integer("Min drops overtreding weight")
-    min_usage_time_violation_weight = fields.Float(
-        "Min gebruikstijd overtreding weight"
-    )
-    drop_duration_in_seconds = fields.Integer("Dropduur in seconden")
-    multi_drop_duration_in_seconds = fields.Integer("Multi-drop duur in seconden")
-    depot_stop_duration_in_seconds = fields.Integer("Depot-stop duur in seconden")
-    priority_cost = fields.Integer("Prioriteitskost")
-    travel_speed = fields.Integer("Reissnelheid")
-    max_usages = fields.Integer("Maximum # inzetten")
-    drop_duration_speed_factor = fields.Integer("Drop-duursnelheidsfactor")
-    abs_range_in_drops = fields.Integer("Absolute capaciteit in leveringen")
-    abs_range_in_drop_size = fields.Integer(
-        "Absolute capaciteit in grootte per levering"
-    )
+    min_usage_time = fields.Float()
+    max_usage_time = fields.Float()
+    usage_window_start = fields.Integer()
+    usage_window_stop = fields.Integer()
+    range_in_meter = fields.Integer()
+    abs_range_in_meter = fields.Integer()
+    range_in_meter_violation_weight = fields.Float()
+    min_drops = fields.Integer()
+    drop_weight = fields.Integer()
+    distance_weight = fields.Float()
+    usage_time_weight = fields.Float()
+    max_usage_time_violation_weight = fields.Float()
+    usage_weight = fields.Integer()
+    min_drops_violation_weight = fields.Integer()
+    min_usage_time_violation_weight = fields.Float()
+    drop_duration_in_seconds = fields.Integer()
+    multi_drop_duration_in_seconds = fields.Integer()
+    depot_stop_duration_in_seconds = fields.Integer()
+    priority_cost = fields.Integer()
+    travel_speed = fields.Integer()
+    max_usages = fields.Integer()
+    drop_duration_speed_factor = fields.Integer()
+    abs_range_in_drops = fields.Integer()
+    abs_range_in_drop_size = fields.Integer()
 
     @api.model
     def get_movetex_fields_as_json(self):
