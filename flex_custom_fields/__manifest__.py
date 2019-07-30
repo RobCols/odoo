@@ -8,7 +8,7 @@
     "website": "https://abstractive.be",
     "license": "OPL-1",
     "depends": ["base", "sale"],
-    "data": ["views/sale_order.xml"],
+    "data": ["views/sale_order.xml", "views/res_partner.xml"],
     "installable": True,
     "auto_install": False,
     "application": False,
