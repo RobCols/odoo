@@ -37,7 +37,7 @@ class SaleOrderLine(models.Model):
             i = 1
             while i < len(headers) + 1:
                 if res[i]:
-                    if grand_total[i]:
+                    if len(grand_total) == i+1:
                         grand_total[i] += res[i]
                     else:
                         grand_total.append(res[i])
@@ -113,7 +113,7 @@ class ForecastReportWeeklyWizard(models.TransientModel):
     supplier = fields.Many2one("res.partner", domain=[("supplier", "=", True)])
 
     def generate_report(self):
-        if week_count < 0:
+        if self.week_count < 0:
             raise UserError(_("Week count must be a positive number."))
         if not self.supplier:
             raise UserError(_("Supplier can't be empty."))
