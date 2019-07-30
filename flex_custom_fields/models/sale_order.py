@@ -4,4 +4,5 @@ from odoo import api, fields, models
 class SaleOrder(models.Model):
     _inherit = "sale.order"
 
-    original_order_reference = fields.Char("Originele order reference")
+    original_order_reference = fields.Char("Original order reference")
+    order_paid = fields.Boolean(default=False)

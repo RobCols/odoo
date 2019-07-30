@@ -5,7 +5,7 @@
             <field name="model">res.partner</field>
             <field name="inherit_id" ref="base_geolocalize.view_crm_partner_geo_form" />
             <field name="arch" type="xml">
-                <xpath expr="//group[@name='routing_group']" position="after">
+                <xpath expr="//page[@name='geo_location']" position="inside">
                     <group col="1" string="Drop off point">
                         <widget name="leaflet_marker" map_type="sat" lat="dropoff_latitude" lng="dropoff_longitude" zoom_field="dropoff_zoomlevel" description="Routing Geo">
                             <field name="dropoff_latitude" />

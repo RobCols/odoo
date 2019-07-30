@@ -24,7 +24,7 @@ odoo.define('web_widget_leaflet', function (require) {
 
         start: function () {
             var self = this;
-            setTimeout(function () { self.on_ready(); }, 1000);
+            setTimeout(function () { self.on_ready(); }, 5000);
             return this._super();
 
         },
@@ -52,11 +52,11 @@ odoo.define('web_widget_leaflet', function (require) {
                     transparent: true,
                 }).addTo(map);
                 L.tileLayer.wms('https://geoservices.informatievlaanderen.be/raadpleegdiensten/GRB/wms?',
-                {
-                    layers: 'GRB_SNM',
-                    format: 'image/png',
-                    transparent: true,
-                }).addTo(map);
+                    {
+                        layers: 'GRB_SNM',
+                        format: 'image/png',
+                        transparent: true,
+                    }).addTo(map);
             }
 
             var marker = new L.marker([lat, lng], {
@@ -78,6 +78,8 @@ odoo.define('web_widget_leaflet', function (require) {
                 }).bindPopup(position).update();
                 my_self.update_latlng(position.lat, position.lng);
             });
+
+            setTimeout(function () { map.invalidateSize(); map.setView([lat, lng], zoomLevel); }, 5000);
 
             var observer = new MutationObserver(function (ev) {
                 map.invalidateSize();
