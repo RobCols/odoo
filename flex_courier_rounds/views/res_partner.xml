@@ -3,10 +3,20 @@
         <record id="view_crm_partner_dropoff_maps" model="ir.ui.view">
             <field name="name">res.partner.dropoff.map.inherit</field>
             <field name="model">res.partner</field>
-            <field name="inherit_id" ref="base_geolocalize.view_crm_partner_geo_form" />
+            <field name="inherit_id" ref="base.view_partner_form" />
             <field name="arch" type="xml">
                 <xpath expr="//page[@name='geo_location']" position="inside">
                     <group col="1" string="Drop off point">
+                        <widget name="leaflet_marker" map_type="sat" lat="dropoff_latitude" lng="dropoff_longitude" zoom_field="dropoff_zoomlevel" description="Routing Geo">
+                            <field name="dropoff_latitude" />
+                            <field name="dropoff_longitude" />
+                            <field name="dropoff_zoomlevel" />
+                        </widget>
+                        <button name="button_set_dropoff_to_routing" type="object" string="default dropoff" class="btn btn-primary" />
+                    </group>
+                </xpath>
+                <xpath expr="//field[@name='child_ids']/form/sheet/group[last()]" position="after">
+                    <group col="1" colspan="2" string="Drop off point" attrs="{'invisible': [('type', '!=', 'delivery')]}">
                         <widget name="leaflet_marker" map_type="sat" lat="dropoff_latitude" lng="dropoff_longitude" zoom_field="dropoff_zoomlevel" description="Routing Geo">
                             <field name="dropoff_latitude" />
                             <field name="dropoff_longitude" />
