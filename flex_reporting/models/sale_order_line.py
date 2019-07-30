@@ -37,9 +37,10 @@ class SaleOrderLine(models.Model):
             i = 1
             while i < len(headers) + 1:
                 if res[i]:
-                    if grand_total[i]:
-                        grand_total[i] += res[i]
-                    else:
+                    try:
+                        if grand_total[i]:
+                            grand_total[i] += res[i]
+                    except IndexError:
                         grand_total.append(res[i])
                 i += 1
         result.append(grand_total)
@@ -51,7 +52,9 @@ class SaleOrderLine(models.Model):
         for record in self:
             if not record.product_id.is_empty:
                 if is_weekly:
-                    index = headers.index("W" + record.date_order.isocalendar()[1]) + 1
+                    index = (
+                        headers.index("W" + str(record.date_order.isocalendar()[1])) + 1
+                    )
                 else:
                     index = (
                         headers.index(record.date_order.date().strftime("%d/%m/%Y")) + 1
@@ -113,7 +116,7 @@ class ForecastReportWeeklyWizard(models.TransientModel):
     supplier = fields.Many2one("res.partner", domain=[("supplier", "=", True)])
 
     def generate_report(self):
-        if week_count < 0:
+        if self.week_count < 0:
             raise UserError(_("Week count must be a positive number."))
         if not self.supplier:
             raise UserError(_("Supplier can't be empty."))
@@ -203,5 +206,5 @@ def find_weeks(start, end):
     date_range = range((end - start).days + 1)
     for i in date_range:
         d = (start + datetime.timedelta(days=i)).isocalendar()
-        l.append("W" + d[1])
+        l.append("W" + str(d[1]))
     return sorted(set(l))

@@ -150,8 +150,8 @@ class SaleOrder(models.Model):
             )
 
         if (
-            not self.partner_shipping_id.partner_longitude
-            or not self.partner_shipping_id.partner_latitude
+            abs(self.partner_shipping_id.partner_longitude) < 0.1
+            and abs(self.partner_shipping_id.partner_latitude) < 0.1
         ):
             self.partner_shipping_id.geocode_one_partner_movetex()
         payload = {
