@@ -5,6 +5,9 @@
             <field name="model">res.partner</field>
             <field name="inherit_id" ref="base.view_partner_form" />
             <field name="arch" type="xml">
+                <field name="vat" position="after">
+                    <field name="delivery_dow" />
+                </field>
                 <xpath expr="//page[@name='geo_location']" position="inside">
                     <group col="1" string="Drop off point">
                         <widget name="leaflet_marker" map_type="sat" lat="dropoff_latitude" lng="dropoff_longitude" zoom_field="dropoff_zoomlevel" description="Routing Geo">
