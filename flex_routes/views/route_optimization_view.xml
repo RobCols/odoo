@@ -15,7 +15,7 @@
             </p>
         </field>
     </record>
-    
+
     <!-- route.optimization tree view -->
     <record id="route_optimization_view_tree" model="ir.ui.view">
         <field name="name">Routeoptimalisatie</field>
@@ -46,12 +46,9 @@
                         </field>
                     </group>
                     <button type="object" name="start_optimization" class="btn btn-primary" string="Start" attrs="{'invisible': [('route_ids', '!=', [])]}" />
-                    
-                    <group string="Resultaat optimalisatie" attrs="{'invisible': [('route_ids', '=', [])]}">
-                        <field name="route_ids" nolabel="1" readonly="1" />
-                    </group>
+                    <div class="o_horizontal_separator" attrs="{'invisible': [('route_ids', '=', [])]}">Resultaat</div>
+                    <field name="route_ids" nolabel="1" readonly="1" style="width: 100%" attrs="{'invisible': [('route_ids', '=', [])]}" />
                     <button type="object" name="cancel_optimization" class="btn btn-danger pull-right" string="Reset" attrs="{'invisible': [('route_ids', '=', [])]}" />
-                    
                 </sheet>
             </form>
         </field>
