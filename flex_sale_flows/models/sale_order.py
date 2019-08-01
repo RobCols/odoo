@@ -17,6 +17,19 @@ class SaleOrder(models.Model):
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
+    @api.multi
+    @api.onchange("product_id")
+    def product_id_change(self):
+        super().product_id_change()
+        self.update(
+            self._get_purchase_price(
+                self.order_id.pricelist_id,
+                self.product_id,
+                self.product_uom,
+                self.order_id.date_order,
+            )
+        )
+
     @api.model
     def _get_purchase_price(self, pricelist, product, product_uom, date):
         """
@@ -27,15 +40,13 @@ class SaleOrderLine(models.Model):
         to_cur = pricelist.currency_id
         seller_ids = product.seller_ids.search(
             [
-                [
-                    "&",
-                    "|",
-                    ["date_start", "<=", date],
-                    ["date_start", "=", False],
-                    "|",
-                    ["date_end", ">", date],
-                    ["date_end", "=", False],
-                ]
+                "&",
+                "|",
+                ["date_start", "<=", date],
+                ["date_start", "=", False],
+                "|",
+                ["date_end", ">", date],
+                ["date_end", "=", False],
             ]
         ).sorted(key=lambda r: r.sequence)
         if not seller_ids:
