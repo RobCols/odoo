@@ -155,7 +155,7 @@ class ForecastedOrderLine(models.Model):
     proposed_forecast_date = fields.Datetime("Proposed Forecast Date", help="")
     forecast_id = fields.Char("Forecast ID")
 
-    @api.model
+    @api.multi
     def send_to_movetex(self):
         ICPSudo = self.env["ir.config_parameter"].sudo()
         client_id = ICPSudo.get_param("flex_forecasting.client_id")
@@ -178,19 +178,19 @@ class ForecastedOrderLine(models.Model):
             data.append(
                 {
                     "partnerId": record.forecast_id,
-                    "customerPartnerId": record.order_id.partner_id.id,
+                    "customerPartnerId": str(record.order_id.partner_id.id),
+                    "productPartnerId": str(record.product_id.id),
                     "quantity": record.quantity,
                     "accepted": record.accepted,
                     "cancelled": record.cancelled,
+                    "forecastedOrder": False,
                     "proposedForecastDate": record.proposed_forecast_date.isoformat(),
                     "deliveryDate": record.order_id.date_order.isoformat(),
                 }
             )
         if data:
             r = requests.put(
-                "https://api.litefleet.io/api/Orders/multiple",
-                json=data,
-                headers=headers,
+                "https://api.litefleet.io/api/Orders/multiple", json=data, headers=headers
             )
             print(r.status_code)
 
@@ -216,7 +216,7 @@ class SaleOrder(models.Model):
         res = super().create(vals)
         return res
 
-    @api.model
+    @api.multi
     def send_forecast_feedback(self):
         recs = self.filtered(lambda o: o.state == "draft")
         for record in recs:
