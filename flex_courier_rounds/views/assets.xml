@@ -1,0 +1,7 @@
+<odoo>
+    <template id="assets_frontend" name="marker_icon_css" inherit_id="web.assets_frontend">
+        <xpath expr="." position="inside">
+            
+        </xpath>
+    </template>
+</odoo>

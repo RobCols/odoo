@@ -5,16 +5,85 @@
         <field name="model">route.route</field>
         <field name="inherit_id" ref="flex_routes.route_route_view_form" />
         <field name="arch" type="xml">
-            <xpath expr="sheet" position="inside">
-                <group col="1" string="Routing point">
-                    <widget name="leaflet_marker_multi" source_ids="sale_order_ids" lat="depot_latitude" lng="depot_longitude" zoom_field="routing_zoomlevel" description="Routing Geo">
-                        <field name="depot_latitude" />
-                        <field name="depot_longitude" />
-                        <field name="routing_zoomlevel" />
-                    </widget>
-                </group>
-            </xpath>
+            <notebook position="inside">
+                <page string="Routing point">
+                    <button type="object" name="open_map" string="View route" />
+                </page>
+            </notebook>
         </field>
     </record>
+
+    <template id="map_with_markers">
+        <html>
+            <head>
+                <title>Route</title>
+                <link rel="stylesheet" href="/flex_courier_rounds/static/src/css/numbered_marker.css" />
+            </head>
+            <body>
+                <span id="route" t-esc="route" style="display: none" />
+                <div id="mapid" style="height: 100%" />
+                <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin="" />
+                <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+                <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js" integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og==" crossorigin=""></script>
+                <![CDATA[<script>
+                        $(document).ready(function() {
+                    L.NumberedDivIcon = L.Icon.extend({
+                        options: {
+                        iconUrl: '/flex_courier_rounds/static/src/img/marker_icon.png',
+                        number: '',
+                        shadowUrl: null,
+                        iconSize: new L.Point(25, 41),
+                            iconAnchor: new L.Point(13, 41),
+                            popupAnchor: new L.Point(0, -33),
+                            /*
+                            iconAnchor: (Point)
+                            popupAnchor: (Point)
+                            */
+                            className: 'leaflet-div-icon'
+                        },
+                        createIcon: function () {
+                            var div = document.createElement('div');
+                            var img = this._createImg(this.options['iconUrl']);
+                            var numdiv = document.createElement('div');
+                            numdiv.setAttribute ( "class", "number" );
+                            numdiv.innerHTML = this.options['number'] || '';
+                            div.appendChild ( img );
+                            div.appendChild ( numdiv );
+                            this._setIconStyles(div, 'icon');
+                            return div;
+                        },                
+                    });
+                    var route = JSON.parse($("#route")[0].innerHTML);
+                    var mymap = L.map('mapid').setView([Number(route.depot.latitude),Number(route.depot.longitude)], 8);
+                    var markerCoords = [];
+                    
+                    var osm = new L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'});    
+                    osm.addTo(mymap);
+    
+                    var depot = L.marker([Number(route.depot.latitude),Number(route.depot.longitude)], 
+                    {
+                        draggable: false,
+                        icon: new L.NumberedDivIcon({number: "Dep."})
+                    });
+                    markerCoords.push(depot.getLatLng());
+    
+                    depot.addTo(mymap);
+                    for (let data of route.sale_order_coords) {
+                        console.log(data);
+                        var marker = L.marker([Number(data.latitude), Number(data.longitude)], {
+                            draggable: false,
+                            icon: new L.NumberedDivIcon({number: "" + data.sequence})
+                        });
+                        marker.bindPopup("<b>" + data.name + "</b><br />" + data.address, {autoClose: false}).openPopup();
+                        markerCoords.push(marker.getLatLng());
+                        marker.addTo(mymap);
+                    }
+                    var polyLine = L.polyline(markerCoords, { color: 'red' }).addTo(mymap)
+                    mymap.fitBounds(polyLine.getBounds());    
+                });
+                    </script> ]]>
+
+            </body>
+        </html>
+    </template>
 </odoo>
-<!-- help -->

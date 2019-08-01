@@ -5,9 +5,9 @@
         <field name="model">route.optimization</field>
         <field name="inherit_id" ref="flex_routes.route_optimization_view_form" />
         <field name="arch" type="xml">
-            <field name="route_ids" position="after">
+            <button name="cancel_optimization" position="after">
                 <button type="object" class="btn btn-primary" name="print_picking" string="Picking" />
-            </field>
+            </button>
         </field>
     </record>
 </odoo>
