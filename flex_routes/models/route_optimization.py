@@ -42,8 +42,8 @@ class RouteOptimization(models.Model):
 
         search_domain = [
             "&",
-            ("date_order", ">=", datetime.combine(self.date, datetime.min.time())),
-            ("date_order", "<=", datetime.combine(self.date, datetime.max.time())),
+            ("date_order", ">=", datetime.combine(self.date, datetime.min.time()).isoformat()+"Z"),
+            ("date_order", "<=", datetime.combine(self.date, datetime.max.time()).isoformat()+"Z"),
         ]
 
         orders = self.env["sale.order"].search(search_domain)
