@@ -1,6 +1,6 @@
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
-from datetime import timedelta
+from datetime import datetime
 import requests
 import json
 import sys
@@ -37,10 +37,13 @@ class RouteOptimization(models.Model):
         DO THE MOVETEX MAGIC
         """
         self.ensure_one()
+
+        test = datetime.combine(self.date, datetime.min.time())
+
         search_domain = [
             "&",
-            ("date_order", ">", self.date - timedelta(days=1)),
-            ("date_order", "<", self.date + timedelta(days=1)),
+            ("date_order", ">=", datetime.combine(self.date, datetime.min.time())),
+            ("date_order", "<=", datetime.combine(self.date, datetime.max.time())),
         ]
 
         orders = self.env["sale.order"].search(search_domain)
