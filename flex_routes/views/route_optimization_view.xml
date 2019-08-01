@@ -48,7 +48,7 @@
                     <button type="object" name="start_optimization" class="btn btn-primary" string="Start" attrs="{'invisible': [('route_ids', '!=', [])]}" />
                     
                     <group string="Resultaat optimalisatie" attrs="{'invisible': [('route_ids', '=', [])]}">
-                        <field name="route_ids" readonly="1" />
+                        <field name="route_ids" nolabel="1" readonly="1" />
                     </group>
                     <button type="object" name="cancel_optimization" class="btn btn-danger pull-right" string="Reset" attrs="{'invisible': [('route_ids', '=', [])]}" />
                     
