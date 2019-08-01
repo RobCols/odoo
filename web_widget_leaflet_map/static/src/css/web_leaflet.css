@@ -1,3 +1,17 @@
 .leaflet {
     height: 400px;
+
 }
+
+
+/* @media (max-width: 575.98px) { 
+    .leaflet {
+        height: 200px;
+    }
+}
+
+@media (min-width: 575.98px) { 
+    .leaflet {
+        height: 400px;
+    }
+} */

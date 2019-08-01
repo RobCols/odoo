@@ -23,6 +23,7 @@
         "views/templates.xml",
         "views/sale_order.xml",
         "data/ir_config_parameter.xml",
+        "data/ir_cron.xml",
     ],
     # only loaded in demonstration mode
     "demo": ["demo/demo.xml"],

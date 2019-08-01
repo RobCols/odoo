@@ -3,8 +3,4 @@
 	<t t-name="leaflet_marker" >
 		<div class="leaflet" />
 	</t>
-	<t t-name="leaflet_marker_multi" >
-		<div class="leaflet" />
-	</t>
-
 </template>
