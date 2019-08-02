@@ -20,6 +20,7 @@
         "data/access_groups.xml",
         "data/hide_menus_for_carrier.xml",
         "data/dummy_vehicle.xml",
+        "data/ir_config_parameter.xml",
         "views/route_view.xml",
         "views/route_optimization_view.xml",
         "views/fleet_vehicle.xml",
