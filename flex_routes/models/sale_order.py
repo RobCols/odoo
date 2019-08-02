@@ -54,7 +54,7 @@ class SaleOrder(models.Model):
     @api.multi
     def _compute_delivery_state(self):
         for record in self:
-            if any(i.delivery_state == "undelivered" for i in record.non_empty_order_line):
+            if any(not i.delivery_state for i in record.non_empty_order_line):
                 record.delivery_state = "undelivered"
             elif record.non_empty_order_line: 
                 record.delivery_state = "delivered"

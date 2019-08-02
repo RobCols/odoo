@@ -40,28 +40,25 @@
                                     <templates>
                                         <t t-name="kanban-box">
                                             <div t-attf-class="oe_kanban_card #{kanban_color(record.flex_color.raw_value)} {{ record.display_type.raw_value ? 'o_is_' + record.display_type.raw_value : '' }}">
-                                                <t t-if="!record.display_type.raw_value">
-                                                    <div class="row">
-                                                        <div class="col-8">
-                                                            <strong>
-                                                                <span>
-                                                                    <t t-esc="record.product_id.value" />
-                                                                </span>
-                                                            </strong>
-                                                        </div>
-                                                        <div class="col-4">
-                                                            <strong>
-                                                                <span class="float-right text-right">
-                                                                    <t t-esc="record.product_uom_qty.value" />
-                                                                    <t t-esc="record.product_uom.value" />
-                                                                    <button t-if="record.delivery_state.value == 'Nog niet afgeleverd'" type="object" name="set_delivery_state_to_delivered" class="btn btn-primary">Afgeleverd</button>
-                                                                    <button t-if="record.delivery_state.value == 'Afgeleverd'" type="object" name="set_delivery_state_to_undelivered" class="btn btn-secondary">Niet afgeleverd</button>
-
-                                                                </span>
-                                                            </strong>
-                                                        </div>
+                                                <div class="row">
+                                                    <div class="col-8">
+                                                        <strong>
+                                                            <span>
+                                                                <t t-esc="record.product_id.value" />
+                                                            </span>
+                                                        </strong>
                                                     </div>
-                                                </t>
+                                                    <div class="col-4">
+                                                        <strong>
+                                                            <span class="float-right text-right">
+                                                                <t t-esc="record.product_uom_qty.value" />
+                                                                <t t-esc="record.product_uom.value" />
+                                                                <button t-if="!record.delivery_state.raw_value" type="object" name="set_delivery_state_to_delivered" class="btn btn-primary">Afgeleverd</button>
+                                                                <button t-if="record.delivery_state.raw_value" type="object" name="set_delivery_state_to_undelivered" class="btn btn-secondary">Niet afgeleverd</button>
+                                                            </span>
+                                                        </strong>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </t>
                                     </templates>

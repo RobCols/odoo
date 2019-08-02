@@ -190,6 +190,7 @@ class SaleOrder(models.Model):
 
     forecast_line_ids = fields.One2many("forecast.order.line", "order_id")
     modification_deadline = fields.Datetime()
+    synced = fields.Boolean("Synchronised with Movetex", default=False)
 
     @api.model
     def create(self, vals):
@@ -205,20 +206,28 @@ class SaleOrder(models.Model):
         return res
 
     @api.model
+    def write(self, vals):
+        if "state" in vals:
+            vals["synced"] = False
+
+        return super().write(vals)
+
+    @api.model
     def send_forecast_feedback(self):
-        recs = self.filtered(lambda o: o.state in ["done", "sale", "cancel"])
+        recs = self.search([("synced", "=", False)])
+        matched_forecast_ids = []
+        unmatched_lines = self.env["sale.order.line"].search([('id', 'in', recs.order_line.ids)])
         for record in recs:
             if (
                 record.modification_deadline
                 and record.modification_deadline <= datetime.datetime.now()
             ):
-                matched_forecast_ids = []
-                unmatched_lines = record.order_line
+                unmatched_lines.append(record.order_line)
                 for line in record.order_line:
                     for forecasted_line in record.forecast_line_ids:
                         if forecasted_line.product_id != line.product_id:
                             continue
-                        forecasted_line.accepted = True
+                        forecasted_line.accepted = record.state in ["done", "sale"]
                         forecasted_line.quantity = line.product_uom_qty
                         matched_forecast_ids.append(forecasted_line.id)
                         unmatched_lines.remove(line)
@@ -226,8 +235,7 @@ class SaleOrder(models.Model):
                     lambda i: i.id not in matched_forecast_ids
                 ):
                     forecasted_line.cancelled = True
-                if record.forecast_line_ids:
-                    record.forecast_line_ids.send_orders_to_forecasting_api()
                 if unmatched_lines:
                     unmatched_lines.send_orders_to_forecasting_api()
-
+                record.synced = True
+        recs.forecast_line_ids.send_orders_to_forecasting_api()
