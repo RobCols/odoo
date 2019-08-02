@@ -1,0 +1,21 @@
+<odoo>
+    <data noupdate="1">
+        <record model="ir.config_parameter" id="extra_drop_duration">
+            <field name="key">flex_routes.extra_drop_duration</field>
+            <field name="value">0</field>
+        </record>
+        <record model="ir.config_parameter" id="fixed_drop_duration_in_seconds">
+            <field name="key">flex_routes.fixed_drop_duration_in_seconds</field>
+            <field name="value">0</field>
+        </record>
+        <record model="ir.config_parameter" id="variable_drop_duration_in_seconds">
+            <field name="key">flex_routes.variable_drop_duration_in_seconds</field>
+            <field name="value">0</field>
+        </record>
+        <record model="ir.config_parameter" id="extra_drop_duration_in_seconds">
+            <field name="key">flex_routes.extra_drop_duration_in_secconds</field>
+            <field name="value">0</field>
+        </record>
+
+    </data>
+</odoo>

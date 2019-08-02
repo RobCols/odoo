@@ -156,6 +156,12 @@ class SaleOrder(models.Model):
             and abs(self.partner_shipping_id.partner_latitude) < 0.1
         ):
             self.partner_shipping_id.geocode_one_partner_movetex()
+
+        ICPSudo = self.env["ir.config_parameter"].sudo()
+        extra_drop_duration = ICPSudo.get_param("flex_routes.extra_drop_duration")
+        fixed_drop_duration_in_seconds = ICPSudo.get_param("flex_routes.fixed_drop_duration_in_seconds")
+        variable_drop_duration_in_seconds = ICPSudo.get_param("flex_routes.variable_drop_duration_in_seconds")
+        extra_drop_duration_in_seconds = ICPSudo.get_param("flex_routes.extra_drop_duration_in_seconds")
         payload = {
             "id": self.id,
             "destination": {
@@ -164,20 +170,20 @@ class SaleOrder(models.Model):
                 "lat": self.partner_shipping_id.partner_latitude,
             },
             "deliveryWindow": {
-                "startInSeconds": 10000,  # TODO
-                "stopInSeconds": 12000,  # TODO
+                "startInSeconds": 25200,  # TODO
+                "stopInSeconds": 64800,  # TODO
             },
             "depotId": self.depot_id.id,
             "preferredTransportationMode": "Car",  # TODO
             "allowedTransportationModes": "Car",  # TODO
-            "revenue": 15,  # TODO
+            "revenue": self.amount_total,  # TODO
             "priority": 10,  # TODO
             "duedate": self.date_order.isoformat(),
             "name": self.name,
             "dropSize": [self.total_crate_equivalence],
-            "extraDropDuration": 60,  # TODO
-            "fixedDropDurationInSeconds": 5,  # TODO
-            "variableDropDurationInSeconds": 10,  # TODO
-            "extraDropDurationInSeconds": 0,  # TODO
+            "extraDropDuration": int(extra_drop_duration),  # TODO
+            "fixedDropDurationInSeconds": int(fixed_drop_duration_in_seconds),  # TODO
+            "variableDropDurationInSeconds": int(variable_drop_duration_in_seconds),  # TODO
+            "extraDropDurationInSeconds": int(extra_drop_duration_in_seconds),  # TODO
         }
         return payload

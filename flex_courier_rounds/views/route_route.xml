@@ -78,6 +78,7 @@
                         markerCoords.push(marker.getLatLng());
                         marker.addTo(mymap);
                     }
+                    markerCoords.push(depot.getLatLng());
                     var polyLine = L.polyline(markerCoords, { color: 'red' }).addTo(mymap)
                     mymap.fitBounds(polyLine.getBounds());    
                 });
