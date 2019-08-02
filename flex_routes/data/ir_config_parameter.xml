@@ -13,7 +13,7 @@
             <field name="value">0</field>
         </record>
         <record model="ir.config_parameter" id="extra_drop_duration_in_seconds">
-            <field name="key">flex_routes.extra_drop_duration_in_secconds</field>
+            <field name="key">flex_routes.extra_drop_duration_in_seconds</field>
             <field name="value">0</field>
         </record>
 
