@@ -20,13 +20,13 @@ class SaleOrder(models.Model):
     non_empty_order_line = fields.One2many(
         "sale.order.line", compute="_compute_non_empty_order_line"
     )
-
+    delivery_info = fields.Text(related="partner_shipping_id.comment")
     empty_order_line = fields.One2many(
         "sale.order.line", compute="_compute_non_empty_order_line"
     )
     delivery_state = fields.Selection(
         [("undelivered", "Nog niet afgeleverd"), ("delivered", "Afgeleverd")],
-        default="undelivered",
+        compute="_compute_delivery_state"
     )
 
     total_crate_equivalence = fields.Float(compute="_compute_total_crate_equivalence")
@@ -52,10 +52,12 @@ class SaleOrder(models.Model):
             record.flex_color = 10
 
     @api.multi
-    def set_delivery_state_to_delivered(self):
-        self.ensure_one()
-        self.delivery_state = "delivered"
-        self.state = "sale"
+    def _compute_delivery_state(self):
+        for record in self:
+            if any(i.delivery_state == "undelivered" for i in record.non_empty_order_line):
+                record.delivery_state = "undelivered"
+            elif record.non_empty_order_line: 
+                record.delivery_state = "delivered"
 
     @api.multi
     def scan_pickups(self):

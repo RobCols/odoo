@@ -13,6 +13,7 @@
                     <notebook colspan="4">
                         <page string="House">
                             <field name="state" invisible="1" />
+                            <field name="delivery_info" />
                             <field name="shipping_street_image" widget="image" />
                             <field name="shipping_satellite_image" widget="image" />
                         </page>
@@ -34,9 +35,11 @@
                                     <field name="price_unit" />
                                     <field name="display_type" />
                                     <field name="tax_id" invisible="1" />
+                                    <field name="delivery_state" invisible="1" />
+                                    <field name="flex_color" invisible="1" />
                                     <templates>
                                         <t t-name="kanban-box">
-                                            <div t-attf-class="oe_kanban_card oe_kanban_global_click {{ record.display_type.raw_value ? 'o_is_' + record.display_type.raw_value : '' }}">
+                                            <div t-attf-class="oe_kanban_card #{kanban_color(record.flex_color.raw_value)} {{ record.display_type.raw_value ? 'o_is_' + record.display_type.raw_value : '' }}">
                                                 <t t-if="!record.display_type.raw_value">
                                                     <div class="row">
                                                         <div class="col-8">
@@ -51,6 +54,9 @@
                                                                 <span class="float-right text-right">
                                                                     <t t-esc="record.product_uom_qty.value" />
                                                                     <t t-esc="record.product_uom.value" />
+                                                                    <button t-if="record.delivery_state.value == 'Nog niet afgeleverd'" type="object" name="set_delivery_state_to_delivered" class="btn btn-primary">Afgeleverd</button>
+                                                                    <button t-if="record.delivery_state.value == 'Afgeleverd'" type="object" name="set_delivery_state_to_undelivered" class="btn btn-secondary">Niet afgeleverd</button>
+
                                                                 </span>
                                                             </strong>
                                                         </div>
@@ -110,7 +116,6 @@
                             </field>
                         </page>
                     </notebook>
-                    <button type="object" name="set_delivery_state_to_delivered" string="Afgeleverd" class="btn btn-primary" />
                 </sheet>
             </form>
         </field>

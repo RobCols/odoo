@@ -4,6 +4,26 @@ import json
 import datetime
 
 
+def get_auth_headers(env):
+    ICPSudo = env["ir.config_parameter"].sudo()
+    client_id = ICPSudo.get_param("flex_forecasting.client_id")
+    client_secret = ICPSudo.get_param("flex_forecasting.client_secret")
+    username = ICPSudo.get_param("flex_forecasting.username")
+    password = ICPSudo.get_param("flex_forecasting.password")
+
+    payload = {
+        "grant_type": "password",
+        "client_id": client_id,
+        "client_secret": client_secret,
+        "username": username,
+        "password": password,
+    }
+
+    r = requests.post("https://idp.litefleet.io/connect/token", data=payload)
+
+    return {"Authorization": f"Bearer {r.json()['access_token']}"}
+
+
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
@@ -15,32 +35,20 @@ class SaleOrderLine(models.Model):
     forecast_id = fields.Char("Forecast ID")
 
     @api.model
+    def sync_orders(self):
+        records = self.search([("sync_needed", "=", True)])
+        records.send_orders_to_forecasting_api()
+
+    @api.multi
     def send_orders_to_forecasting_api(self):
-        # records = self.search([("sync_needed", "=", True)])
-        ICPSudo = self.env["ir.config_parameter"].sudo()
-        client_id = ICPSudo.get_param("flex_forecasting.client_id")
-        client_secret = ICPSudo.get_param("flex_forecasting.client_secret")
-        username = ICPSudo.get_param("flex_forecasting.username")
-        password = ICPSudo.get_param("flex_forecasting.password")
-
-        payload = {
-            "grant_type": "password",
-            "client_id": client_id,
-            "client_secret": client_secret,
-            "username": username,
-            "password": password,
-        }
-
-        r = requests.post("https://idp.litefleet.io/connect/token", data=payload)
-
+        headers = get_auth_headers(self.env)
+        data = []
         records = self.search(
             [("name", "not ilike", "total"), ("product_uom_qty", ">", 0)]
         )
-        headers = {"Authorization": f"Bearer {r.json()['access_token']}"}
-        data = []
+
         for ol in records.filtered(
             lambda ol: not ol.product_id.product_tmpl_id.is_empty
-            and ol.order_id.state in ["draft", "sent", "done", "sale"]
         ):
             data.append(
                 {
@@ -49,12 +57,12 @@ class SaleOrderLine(models.Model):
                     "productPartnerId": ol.product_id.id,
                     "quantity": ol.product_uom_qty,
                     "forecastedOrder": False,
-                    "accepted": True,
-                    "cancelled": False,
+                    "accepted": ol.order_id.state in ["done", "sale"],
+                    "cancelled": ol.order_id.state == "cancel",
                     "deliveryDate": ol.order_id.date_order.isoformat(),
                 }
             )
-        r = requests.post(
+        r = requests.put(
             "https://api.litefleet.io/api/Orders/multiple", json=data, headers=headers
         )
         print(r.status_code)
@@ -63,22 +71,18 @@ class SaleOrderLine(models.Model):
 
     @api.model
     def predict_purchases(self):
+        headers = get_auth_headers(self.env)
         ICPSudo = self.env["ir.config_parameter"].sudo()
-        client_id = ICPSudo.get_param("flex_forecasting.client_id")
-        client_secret = ICPSudo.get_param("flex_forecasting.client_secret")
-        username = ICPSudo.get_param("flex_forecasting.username")
-        password = ICPSudo.get_param("flex_forecasting.password")
 
-        payload = {
-            "grant_type": "password",
-            "client_id": client_id,
-            "client_secret": client_secret,
-            "username": username,
-            "password": password,
-        }
-        r = requests.post("https://idp.litefleet.io/connect/token", data=payload)
-
-        headers = {"Authorization": f"Bearer {r.json()['access_token']}"}
+        orders_used = ICPSudo.get_param(
+            "flex_forecasting.number_of_orders_used_in_forecast"
+        )
+        missed_expected_orders = ICPSudo.get_param(
+            "flex_forecasting.max_number_of_missed_expected_orders"
+        )
+        weeks_without_orders = ICPSudo.get_param(
+            "flex_forecasting.max_number_of_weeks_without_orders"
+        )
 
         records = self.search(
             [("name", "not ilike", "total"), ("product_uom_qty", ">", 0)]
@@ -95,14 +99,13 @@ class SaleOrderLine(models.Model):
                 data = {}
                 data["productPartnerId"] = record.product_id.id
                 data["customerPartnerId"] = record.order_id.partner_id.id
-                data["nbOfOrdersUsedInForecast"] = 2
-                data["maxNbOfMissedExpectedOrders"] = 2
-                data["maxNbOfWeeksWithoutOrders"] = 4
+                data["nbOfOrdersUsedInForecast"] = int(orders_used)
+                data["maxNbOfMissedExpectedOrders"] = int(missed_expected_orders)
+                data["maxNbOfWeeksWithoutOrders"] = int(weeks_without_orders)
                 resp = requests.post(
                     "https://api.litefleet.io/api/Forecasts", json=data, headers=headers
                 )
                 response = resp.json()
-                print(response)
                 sent_ids.append([record.product_id.id, record.order_id.partner_id.id])
                 if response.get("order", False) and response["order"].get(
                     "proposedForecastDate", False
@@ -124,7 +127,6 @@ class SaleOrderLine(models.Model):
                             "state": "draft",
                         }
                         order = SaleOrder.create(vals)
-                    print(order)
                     vals = {
                         "product_id": record.product_id.id,
                         "order_id": order.id,
@@ -132,7 +134,6 @@ class SaleOrderLine(models.Model):
                         "proposed_forecast_date": date,
                     }
                     line = OrderLine.create(vals)
-                    print(line)
                     vals = {
                         "product_id": record.product_id.id,
                         "order_id": order.id,
@@ -156,23 +157,8 @@ class ForecastedOrderLine(models.Model):
     forecast_id = fields.Char("Forecast ID")
 
     @api.multi
-    def send_to_movetex(self):
-        ICPSudo = self.env["ir.config_parameter"].sudo()
-        client_id = ICPSudo.get_param("flex_forecasting.client_id")
-        client_secret = ICPSudo.get_param("flex_forecasting.client_secret")
-        username = ICPSudo.get_param("flex_forecasting.username")
-        password = ICPSudo.get_param("flex_forecasting.password")
-
-        payload = {
-            "grant_type": "password",
-            "client_id": client_id,
-            "client_secret": client_secret,
-            "username": username,
-            "password": password,
-        }
-        r = requests.post("https://idp.litefleet.io/connect/token", data=payload)
-
-        headers = {"Authorization": f"Bearer {r.json()['access_token']}"}
+    def send_orders_to_forecasting_api(self):
+        headers = get_auth_headers(self.env)
         data = []
         for record in self:
             data.append(
@@ -190,7 +176,9 @@ class ForecastedOrderLine(models.Model):
             )
         if data:
             r = requests.put(
-                "https://api.litefleet.io/api/Orders/multiple", json=data, headers=headers
+                "https://api.litefleet.io/api/Orders/multiple",
+                json=data,
+                headers=headers,
             )
             print(r.status_code)
 
@@ -216,15 +204,16 @@ class SaleOrder(models.Model):
         res = super().create(vals)
         return res
 
-    @api.multi
+    @api.model
     def send_forecast_feedback(self):
-        recs = self.filtered(lambda o: o.state == "draft")
+        recs = self.filtered(lambda o: o.state in ["done", "sale", "cancel"])
         for record in recs:
             if (
                 record.modification_deadline
                 and record.modification_deadline <= datetime.datetime.now()
             ):
                 matched_forecast_ids = []
+                unmatched_lines = record.order_line
                 for line in record.order_line:
                     for forecasted_line in record.forecast_line_ids:
                         if forecasted_line.product_id != line.product_id:
@@ -232,10 +221,13 @@ class SaleOrder(models.Model):
                         forecasted_line.accepted = True
                         forecasted_line.quantity = line.product_uom_qty
                         matched_forecast_ids.append(forecasted_line.id)
+                        unmatched_lines.remove(line)
                 for forecasted_line in record.forecast_line_ids.filtered(
                     lambda i: i.id not in matched_forecast_ids
                 ):
                     forecasted_line.cancelled = True
                 if record.forecast_line_ids:
-                    record.forecast_line_ids.send_to_movetex()
-                record.state = "sent"
+                    record.forecast_line_ids.send_orders_to_forecasting_api()
+                if unmatched_lines:
+                    unmatched_lines.send_orders_to_forecasting_api()
+

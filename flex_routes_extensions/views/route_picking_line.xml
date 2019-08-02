@@ -160,8 +160,8 @@
                         </field>
                     </page>
                     <page string="Picking" name="picking">
-                        <field name="route_picking_ids">
-                            <tree editable="bottom" decoration-success="state==True" decoration-danger="state==False">
+                        <field name="route_picking_ids" >
+                            <tree editable="bottom" decoration-success="state==True" decoration-danger="state==False" default_order="stock_location">
                                 <field name="product_qty" readonly="1" />
                                 <field name="product_id" readonly="1" />
                                 <field name="stock_location" readonly="1" />
