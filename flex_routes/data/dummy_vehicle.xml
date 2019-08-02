@@ -1,0 +1,16 @@
+<odoo>
+    <data>
+    <record model="fleet.vehicle.model.brand" id="dummy_brand">
+        <field name="name"> </field>
+    </record>
+    <record model="fleet.vehicle.model" id="dummy_model">
+        <field name="name"> </field>
+        <field name="brand_id" ref="flex_routes.dummy_brand" />
+    </record>
+    <record model="fleet.vehicle" id="dummy_vehicle">
+            <field name="name">Niet leverbaar</field>
+            <field name="model_id" ref="flex_routes.dummy_model" />
+            <field name="license_plate">Niet leverbaar</field>
+        </record>        
+    </data>
+</odoo>

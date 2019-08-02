@@ -110,8 +110,12 @@ class RouteOptimization(models.Model):
             for route in response.get("routes"):
                 if not route.get("deliveryTasks", False):
                     continue
-                user_id = int(route["vehicleId"].split("_")[1])
-                vehicle_id = int(route["vehicleId"].split("_")[0])
+                if not route["vehicleId"] == "DUMMY": 
+                    user_id = int(route["vehicleId"].split("_")[1])
+                    vehicle_id = int(route["vehicleId"].split("_")[0])
+                else:
+                    user_id = 0
+                    vehicle_id = self.env.ref("flex_routes.dummy_vehicle").id
                 created_route = RouteModel.create(
                     {"user_id": user_id, "date": self.date, "vehicle_id": vehicle_id}
                 )
