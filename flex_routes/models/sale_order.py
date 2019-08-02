@@ -131,7 +131,7 @@ class SaleOrder(models.Model):
                             ", " + record.partner_shipping_id.street_number
                         )
                     if record.partner_shipping_id.city_id:
-                        address_string += ", " + record.partner_shipping_id.city_id
+                        address_string += ", " + record.partner_shipping_id.city_id.name
                     elif record.partner_shipping_id.city:
                         if record.partner_shipping_id.zip:
                             address_string += f", {record.partner_shipping_id.zip} {record.partner_shipping_id.city}"
