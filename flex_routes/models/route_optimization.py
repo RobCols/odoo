@@ -1,10 +1,11 @@
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
-from datetime import datetime
+import datetime
 import requests
 import json
 import sys
 import time
+import pytz
 
 
 class RouteOptimization(models.Model):
@@ -37,13 +38,10 @@ class RouteOptimization(models.Model):
         DO THE MOVETEX MAGIC
         """
         self.ensure_one()
-
-        test = datetime.combine(self.date, datetime.min.time())
-
         search_domain = [
             "&",
-            ("date_order", ">=", datetime.combine(self.date, datetime.min.time()).isoformat()+"Z"),
-            ("date_order", "<=", datetime.combine(self.date, datetime.max.time()).isoformat()+"Z"),
+            ("date_order", ">=", to_utc(self.env.user.tz, self.date)),
+            ("date_order", "<", self.date + datetime.timedelta(days=1)),
         ]
 
         orders = self.env["sale.order"].search(search_domain)
@@ -175,3 +173,11 @@ class RouteOptimization(models.Model):
         r = requests.post("https://idp.litefleet.io/connect/token", data=payload)
 
         return r.json()["access_token"]
+
+
+def to_utc(timezone, date_to_convert):
+    local = pytz.timezone(timezone)
+    naive = datetime.datetime.combine(date_to_convert, datetime.time.min)
+    local_dt = local.localize(naive, is_dst=None)
+    utc_dt = local_dt.astimezone(pytz.utc)
+    return utc_dt
