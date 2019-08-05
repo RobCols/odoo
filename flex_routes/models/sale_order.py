@@ -176,7 +176,7 @@ class SaleOrder(models.Model):
             "depotId": self.depot_id.id,
             "preferredTransportationMode": "Car",  # TODO
             "allowedTransportationModes": "Car",  # TODO
-            "revenue": self.amount_total,  # TODO
+            "revenue": 0,  # Ken wilt 0
             "priority": 10,  # TODO
             "duedate": self.date_order.isoformat(),
             "name": self.name,
