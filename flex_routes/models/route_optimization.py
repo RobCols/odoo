@@ -70,6 +70,20 @@ class RouteOptimization(models.Model):
                 }
             ],
             "distanceComputationMethod": "OpenStreetMap",
+            "ObjectiveParameters": {
+                "EqualCompletionTimeWeight": None,
+                "UndeliveredPriorityWeight": None,
+                "TransportationModeWeight": None,
+                "TimeWindowViolationWeight": None,
+                "VehicleUsageWeightMultiplier": None,
+                "DistanceWeightMultiplier": None,
+                "TimeWeightMultiplier": None,
+                "DropWeightMultiplier": None,
+                "OverTimeWeightMultiplier": None,
+                "OverDistanceWeightMultiplier": None,
+                "MinUsageTimeViolationWeightMultiplier": None,
+                "MinDropsViolationWeightMultiplier": None,
+            },
         }
 
         payload.update({"depots": self.get_depots_from_vehicle(payload)})
@@ -110,9 +124,10 @@ class RouteOptimization(models.Model):
             for route in response.get("routes"):
                 if not route.get("deliveryTasks", False):
                     continue
-                if not route["vehicleId"] == "DUMMY": 
-                    user_id = int(route["vehicleId"].split("_")[1])
-                    vehicle_id = int(route["vehicleId"].split("_")[0])
+                if not route["vehicleId"] == "DUMMY":
+                    prep = self.env['route.optimization.preparation'].browse(int(route["vehicleId"]))
+                    user_id = prep.user_id.id
+                    vehicle_id = prep.vehicle_id.id
                 else:
                     user_id = 0
                     vehicle_id = self.env.ref("flex_routes.dummy_vehicle").id

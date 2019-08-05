@@ -21,7 +21,7 @@ class RouteOptimizationPreparation(models.Model):
                 "maxUsageTime": self.max_driving_time * 3600,
             }
         )
-        payload["vehicleId"] = f"{payload['vehicleId']}_{self.user_id.id}"
+        payload["vehicleId"] = f"{self.id}"
         return payload
 
     @api.multi
