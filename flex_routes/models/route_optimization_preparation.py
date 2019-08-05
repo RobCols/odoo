@@ -17,8 +17,8 @@ class RouteOptimizationPreparation(models.Model):
         payload = self.vehicle_id.get_movetex_fields_as_json()
         payload.update(
             {
-                "minUsageTime": self.min_driving_time * 360,
-                "maxUsageTime": self.max_driving_time * 360,
+                "minUsageTime": self.min_driving_time * 3600,
+                "maxUsageTime": self.max_driving_time * 3600,
             }
         )
         payload["vehicleId"] = f"{payload['vehicleId']}_{self.user_id.id}"
