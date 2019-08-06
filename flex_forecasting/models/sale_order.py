@@ -128,12 +128,15 @@ class SaleOrderLine(models.Model):
                 )
                 if resp.status_code == 200:
                     response = resp.json()
-                    sent_ids.append([record.product_id.id, record.order_id.partner_id.id])
+                    sent_ids.append(
+                        [record.product_id.id, record.order_id.partner_id.id]
+                    )
                     if response.get("order", False) and response["order"].get(
                         "proposedForecastDate", False
                     ):
                         date = datetime.datetime.strptime(
-                            response["order"]["proposedForecastDate"], "%Y-%m-%dT%H:%M:%S"
+                            response["order"]["proposedForecastDate"],
+                            "%Y-%m-%dT%H:%M:%S",
                         )
                         order = SaleOrder.search(
                             [
