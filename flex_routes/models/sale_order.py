@@ -6,6 +6,7 @@ from odoo.exceptions import UserError
 class SaleOrder(models.Model):
     _inherit = "sale.order"
 
+    courier_note = fields.Text("Note")
     route_id = fields.Many2one("route.route")
     route_sequence = fields.Integer()
     optimization_id = fields.Many2one("route.optimization")
@@ -26,7 +27,7 @@ class SaleOrder(models.Model):
     )
     delivery_state = fields.Selection(
         [("undelivered", "Nog niet afgeleverd"), ("delivered", "Afgeleverd")],
-        compute="_compute_delivery_state"
+        compute="_compute_delivery_state",
     )
 
     total_crate_equivalence = fields.Float(compute="_compute_total_crate_equivalence")
@@ -56,7 +57,7 @@ class SaleOrder(models.Model):
         for record in self:
             if any(not i.delivery_state for i in record.non_empty_order_line):
                 record.delivery_state = "undelivered"
-            elif record.non_empty_order_line: 
+            elif record.non_empty_order_line:
                 record.delivery_state = "delivered"
 
     @api.multi
@@ -159,9 +160,15 @@ class SaleOrder(models.Model):
 
         ICPSudo = self.env["ir.config_parameter"].sudo()
         extra_drop_duration = ICPSudo.get_param("flex_routes.extra_drop_duration")
-        fixed_drop_duration_in_seconds = ICPSudo.get_param("flex_routes.fixed_drop_duration_in_seconds")
-        variable_drop_duration_in_seconds = ICPSudo.get_param("flex_routes.variable_drop_duration_in_seconds")
-        extra_drop_duration_in_seconds = ICPSudo.get_param("flex_routes.extra_drop_duration_in_seconds")
+        fixed_drop_duration_in_seconds = ICPSudo.get_param(
+            "flex_routes.fixed_drop_duration_in_seconds"
+        )
+        variable_drop_duration_in_seconds = ICPSudo.get_param(
+            "flex_routes.variable_drop_duration_in_seconds"
+        )
+        extra_drop_duration_in_seconds = ICPSudo.get_param(
+            "flex_routes.extra_drop_duration_in_seconds"
+        )
         payload = {
             "id": self.id,
             "destination": {
@@ -183,7 +190,9 @@ class SaleOrder(models.Model):
             "dropSize": [self.total_crate_equivalence],
             "extraDropDuration": int(extra_drop_duration),  # TODO
             "fixedDropDurationInSeconds": int(fixed_drop_duration_in_seconds),  # TODO
-            "variableDropDurationInSeconds": int(variable_drop_duration_in_seconds),  # TODO
+            "variableDropDurationInSeconds": int(
+                variable_drop_duration_in_seconds
+            ),  # TODO
             "extraDropDurationInSeconds": int(extra_drop_duration_in_seconds),  # TODO
         }
         return payload

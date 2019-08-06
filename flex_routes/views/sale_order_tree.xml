@@ -3,11 +3,12 @@
     <record id="flex_routes_sale_order_view_tree" model="ir.ui.view">
         <field name="name">sale.order.view.tree</field>
         <field name="model">sale.order</field>
+        <field name="context">{'no_checkbox': 1} </field>
         <field name="arch" type="xml">
-            <tree default_order="route_sequence" decoration-success="delivery_state=='delivered'" decoration-danger="delivery_state=='undelivered'">
+            <tree create="0" default_order="route_sequence" decoration-success="delivery_state=='delivered'" decoration-danger="delivery_state=='undelivered'">
                 <field name="delivery_state" invisible="1" />
                 <field name="state" invisible="1" />
-                <field name="route_sequence" />
+                <field name="route_sequence" string="#" />
                 <field name="partner_shipping_id" />
             </tree>
         </field>

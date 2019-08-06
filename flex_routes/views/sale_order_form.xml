@@ -4,7 +4,7 @@
         <field name="name">sale.order.view.form</field>
         <field name="model">sale.order</field>
         <field name="arch" type="xml">
-            <form string="">
+            <form string="" create="0">
                 <sheet>
                     <header>
                         <field name="google_shipping_url" widget="url" text_field="delivery_address_string" />
@@ -111,6 +111,10 @@
                                     </templates>
                                 </kanban>
                             </field>
+                        </page>
+                        <page string="Notes">
+                            <span>Notes</span>
+                            <field name="courier_note" string="Notes" />
                         </page>
                     </notebook>
                 </sheet>

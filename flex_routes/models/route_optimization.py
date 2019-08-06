@@ -125,7 +125,9 @@ class RouteOptimization(models.Model):
                 if not route.get("deliveryTasks", False):
                     continue
                 if not route["vehicleId"] == "DUMMY":
-                    prep = self.env['route.optimization.preparation'].browse(int(route["vehicleId"]))
+                    prep = self.env["route.optimization.preparation"].browse(
+                        int(route["vehicleId"])
+                    )
                     user_id = prep.user_id.id
                     vehicle_id = prep.vehicle_id.id
                 else:

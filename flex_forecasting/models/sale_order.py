@@ -70,6 +70,27 @@ class SaleOrderLine(models.Model):
         return True
 
     @api.model
+    def create(self, vals):
+        res = super().create(vals)
+        if not res.order_id.forecast_line_ids.filtered(
+            lambda i: i.product_id.id == res.product_id.id and not i.product_id.is_empty
+        ):
+            self.env["forecast.order.line"].create(
+                {
+                    "product_id": res.product_id.id,
+                    "order_id": res.order_id.id,
+                    "quantity": 0,
+                    "proposed_forecast_date": False,
+                    "forecast_id": 0,
+                }
+            )
+        return res
+
+    @api.multi
+    def cancel_forecast(self):
+        headers = get_auth_headers(self.env)
+
+    @api.model
     def predict_purchases(self):
         headers = get_auth_headers(self.env)
         ICPSudo = self.env["ir.config_parameter"].sudo()
@@ -105,44 +126,45 @@ class SaleOrderLine(models.Model):
                 resp = requests.post(
                     "https://api.litefleet.io/api/Forecasts", json=data, headers=headers
                 )
-                response = resp.json()
-                sent_ids.append([record.product_id.id, record.order_id.partner_id.id])
-                if response.get("order", False) and response["order"].get(
-                    "proposedForecastDate", False
-                ):
-                    date = datetime.datetime.strptime(
-                        response["order"]["proposedForecastDate"], "%Y-%m-%dT%H:%M:%S"
-                    )
-                    order = SaleOrder.search(
-                        [
-                            "&",
-                            ("partner_id", "=", record.order_id.partner_id.id),
-                            ("date_order", "=", date),
-                        ]
-                    )
-                    if not order:
+                if resp.status_code == 200:
+                    response = resp.json()
+                    sent_ids.append([record.product_id.id, record.order_id.partner_id.id])
+                    if response.get("order", False) and response["order"].get(
+                        "proposedForecastDate", False
+                    ):
+                        date = datetime.datetime.strptime(
+                            response["order"]["proposedForecastDate"], "%Y-%m-%dT%H:%M:%S"
+                        )
+                        order = SaleOrder.search(
+                            [
+                                "&",
+                                ("partner_id", "=", record.order_id.partner_id.id),
+                                ("date_order", "=", date),
+                            ]
+                        )
+                        if not order:
+                            vals = {
+                                "date_order": date,
+                                "partner_id": record.order_id.partner_id.id,
+                                "state": "draft",
+                            }
+                            order = SaleOrder.create(vals)
                         vals = {
-                            "date_order": date,
-                            "partner_id": record.order_id.partner_id.id,
-                            "state": "draft",
+                            "product_id": record.product_id.id,
+                            "order_id": order.id,
+                            "quantity": response["order"]["quantity"],
+                            "proposed_forecast_date": date,
+                            "forecast_id": response["order"]["partnerId"],
                         }
-                        order = SaleOrder.create(vals)
-                    vals = {
-                        "product_id": record.product_id.id,
-                        "order_id": order.id,
-                        "product_uom_qty": response["order"]["quantity"],
-                        "proposed_forecast_date": date,
-                    }
-                    line = OrderLine.create(vals)
-                    vals = {
-                        "product_id": record.product_id.id,
-                        "order_id": order.id,
-                        "quantity": response["order"]["quantity"],
-                        "proposed_forecast_date": date,
-                        "forecast_id": response["order"]["partnerId"],
-                    }
-                    res = ForecastedOrderLine.create(vals)
-                    print(res)
+                        ForecastedOrderLine.create(vals)
+
+                        vals = {
+                            "product_id": record.product_id.id,
+                            "order_id": order.id,
+                            "product_uom_qty": response["order"]["quantity"],
+                            "proposed_forecast_date": date,
+                        }
+                        OrderLine.create(vals)
 
 
 class ForecastedOrderLine(models.Model):
@@ -205,7 +227,7 @@ class SaleOrder(models.Model):
         res = super().create(vals)
         return res
 
-    @api.model
+    @api.multi
     def write(self, vals):
         if "state" in vals:
             vals["synced"] = False
@@ -216,26 +238,22 @@ class SaleOrder(models.Model):
     def send_forecast_feedback(self):
         recs = self.search([("synced", "=", False)])
         matched_forecast_ids = []
-        unmatched_lines = self.env["sale.order.line"].search([('id', 'in', recs.order_line.ids)])
+        unmatched_lines = []
         for record in recs:
-            if (
-                record.modification_deadline
-                and record.modification_deadline <= datetime.datetime.now()
+            unmatched_lines.append(record.order_line)
+            for line in record.order_line:
+                for forecasted_line in record.forecast_line_ids:
+                    if forecasted_line.product_id != line.product_id:
+                        continue
+                    forecasted_line.accepted = record.state in ["done", "sale"]
+                    forecasted_line.quantity = line.product_uom_qty
+                    matched_forecast_ids.append(forecasted_line.id)
+                    unmatched_lines.remove(line)
+            for forecasted_line in record.forecast_line_ids.filtered(
+                lambda i: i.id not in matched_forecast_ids
             ):
-                unmatched_lines.append(record.order_line)
-                for line in record.order_line:
-                    for forecasted_line in record.forecast_line_ids:
-                        if forecasted_line.product_id != line.product_id:
-                            continue
-                        forecasted_line.accepted = record.state in ["done", "sale"]
-                        forecasted_line.quantity = line.product_uom_qty
-                        matched_forecast_ids.append(forecasted_line.id)
-                        unmatched_lines.remove(line)
-                for forecasted_line in record.forecast_line_ids.filtered(
-                    lambda i: i.id not in matched_forecast_ids
-                ):
-                    forecasted_line.cancelled = True
-                if unmatched_lines:
-                    unmatched_lines.send_orders_to_forecasting_api()
-                record.synced = True
+                forecasted_line.cancelled = True
+            if unmatched_lines:
+                unmatched_lines.send_orders_to_forecasting_api()
+            record.synced = True
         recs.forecast_line_ids.send_orders_to_forecasting_api()

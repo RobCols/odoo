@@ -39,6 +39,8 @@ class RouteRoute(models.Model):
                 "active_ids": self.sale_order_ids.ids,
                 "res_ids": self.sale_order_ids.ids,
                 "ids": self.sale_order_ids.ids,
+                "hide_selectors": True,
+                "form_view_initial_mode": "edit",
             },
             "type": "ir.actions.act_window",
             "domain": [("id", "in", self.sale_order_ids.ids)],

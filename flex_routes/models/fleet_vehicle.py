@@ -55,7 +55,7 @@ class FleetVehicle(models.Model):
             self.start_location_partner_id.geocode_one_partner_movetex()
         if not self.stop_location_lng and not self.stop_location_lat:
             self.stop_location_partner_id.geocode_one_partner_movetex()
-        if not self.depot_id.partner_latitude and not self.depot_id.partner_longitude: 
+        if not self.depot_id.partner_latitude and not self.depot_id.partner_longitude:
             self.depot_id.geocode_one_partner_movetex()
         payload = {
             "vehicleId": self.id,

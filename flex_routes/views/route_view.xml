@@ -6,6 +6,7 @@
         <field name="res_model">route.route</field>
         <field name="view_mode">tree,form</field>
         <field name="view_type">form</field>
+        <field name="context">{'hide_selectors': True} </field>
         <field name="help" type="html">
             <p class="oe_view_nocontent_create">
                 <!-- Add Text Here -->

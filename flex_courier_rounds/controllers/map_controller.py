@@ -35,4 +35,3 @@ class MapController(http.Controller):
         return http.request.render(
             "flex_courier_rounds.map_with_markers", {"route": json.dumps(result)}
         )
-

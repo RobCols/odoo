@@ -32,8 +32,8 @@
                         iconUrl: '/flex_courier_rounds/static/src/img/marker_icon.png',
                         number: '',
                         shadowUrl: null,
-                        iconSize: new L.Point(25, 41),
-                            iconAnchor: new L.Point(13, 41),
+                        iconSize: new L.Point(50, 81),
+                            iconAnchor: new L.Point(25, 81),
                             popupAnchor: new L.Point(0, -33),
                             /*
                             iconAnchor: (Point)

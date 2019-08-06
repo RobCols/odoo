@@ -21,7 +21,7 @@ class RouteRoute(models.Model):
         return {
             "type": "ir.actions.act_url",
             "target": "self",
-            "url": f"/route/map?active_id={self.id}"
+            "url": f"/route/map?active_id={self.id}",
         }
         # action = self.env.ref(
         #     "flex_courier_rounds.action_open_map_view"
